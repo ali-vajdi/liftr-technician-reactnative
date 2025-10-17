@@ -21,23 +21,40 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header with curved design */}
       <View style={styles.header}>
-        {/* Decorative lines pattern */}
+        {/* Galaxy-like circle patterns */}
         <View style={styles.patternContainer}>
-          <View style={styles.patternLine1} />
-          <View style={styles.patternLine2} />
-          <View style={styles.patternLine3} />
-          <View style={styles.patternLine4} />
+          {/* Large galaxy circles */}
+          <View style={styles.galaxyCircle1} />
+          <View style={styles.galaxyCircle2} />
+          <View style={styles.galaxyCircle3} />
+          
+          {/* Medium stars */}
+          <View style={styles.star1} />
+          <View style={styles.star2} />
+          <View style={styles.star3} />
+          <View style={styles.star4} />
+          <View style={styles.star5} />
+          
+          {/* Small twinkling dots */}
+          <View style={styles.twinkle1} />
+          <View style={styles.twinkle2} />
+          <View style={styles.twinkle3} />
+          <View style={styles.twinkle4} />
+          <View style={styles.twinkle5} />
+          <View style={styles.twinkle6} />
+          <View style={styles.twinkle7} />
+          <View style={styles.twinkle8} />
         </View>
         
-        {/* Curved bottom border */}
+        {/* Simple curved bottom border */}
         <Svg
           width={width}
-          height={140}
+          height={60}
           style={styles.curve}
-          viewBox={`0 0 ${width} 140`}
+          viewBox={`0 0 ${width} 60`}
         >
           <Path
-            d={`M0,140 Q${width * 0.25},100 ${width * 0.5},110 Q${width * 0.75},90 ${width},100 L${width},140 Z`}
+            d={`M0,60 Q${width * 0.5},20 ${width},60 L${width},60 Z`}
             fill="#ffffff"
           />
         </Svg>
@@ -85,45 +102,154 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  patternLine1: {
+  // Large galaxy circles
+  galaxyCircle1: {
     position: 'absolute',
-    top: '20%',
-    left: '10%',
-    width: '60%',
-    height: 3,
-    backgroundColor: 'rgba(202, 240, 248, 0.4)',
-    borderRadius: 2,
-    transform: [{ rotate: '-15deg' }],
+    top: '10%',
+    left: '15%',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(202, 240, 248, 0.3)',
   },
-  patternLine2: {
-    position: 'absolute',
-    top: '35%',
-    right: '15%',
-    width: '50%',
-    height: 3,
-    backgroundColor: 'rgba(144, 224, 239, 0.5)',
-    borderRadius: 2,
-    transform: [{ rotate: '20deg' }],
-  },
-  patternLine3: {
+  galaxyCircle2: {
     position: 'absolute',
     top: '50%',
-    left: '20%',
-    width: '40%',
-    height: 3,
-    backgroundColor: 'rgba(0, 180, 216, 0.3)',
-    borderRadius: 2,
-    transform: [{ rotate: '-10deg' }],
+    right: '20%',
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    backgroundColor: 'rgba(144, 224, 239, 0.4)',
   },
-  patternLine4: {
+  galaxyCircle3: {
+    position: 'absolute',
+    top: '75%',
+    left: '25%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(0, 180, 216, 0.3)',
+  },
+  
+  // Medium stars
+  star1: {
+    position: 'absolute',
+    top: '25%',
+    right: '35%',
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(202, 240, 248, 0.6)',
+  },
+  star2: {
+    position: 'absolute',
+    top: '40%',
+    left: '40%',
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: 'rgba(144, 224, 239, 0.7)',
+  },
+  star3: {
     position: 'absolute',
     top: '65%',
-    right: '25%',
-    width: '45%',
-    height: 3,
-    backgroundColor: 'rgba(202, 240, 248, 0.4)',
+    right: '45%',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: 'rgba(0, 180, 216, 0.5)',
+  },
+  star4: {
+    position: 'absolute',
+    top: '30%',
+    left: '60%',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(202, 240, 248, 0.8)',
+  },
+  star5: {
+    position: 'absolute',
+    top: '80%',
+    right: '60%',
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
+    backgroundColor: 'rgba(144, 224, 239, 0.6)',
+  },
+  
+  // Small twinkling dots
+  twinkle1: {
+    position: 'absolute',
+    top: '15%',
+    right: '10%',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(202, 240, 248, 0.9)',
+  },
+  twinkle2: {
+    position: 'absolute',
+    top: '35%',
+    left: '10%',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(144, 224, 239, 0.8)',
+  },
+  twinkle3: {
+    position: 'absolute',
+    top: '55%',
+    right: '5%',
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: 'rgba(0, 180, 216, 0.7)',
+  },
+  twinkle4: {
+    position: 'absolute',
+    top: '20%',
+    left: '70%',
+    width: 4,
+    height: 4,
     borderRadius: 2,
-    transform: [{ rotate: '15deg' }],
+    backgroundColor: 'rgba(202, 240, 248, 0.9)',
+  },
+  twinkle5: {
+    position: 'absolute',
+    top: '45%',
+    right: '70%',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(144, 224, 239, 0.8)',
+  },
+  twinkle6: {
+    position: 'absolute',
+    top: '70%',
+    left: '5%',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(0, 180, 216, 0.9)',
+  },
+  twinkle7: {
+    position: 'absolute',
+    top: '85%',
+    right: '30%',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(202, 240, 248, 0.7)',
+  },
+  twinkle8: {
+    position: 'absolute',
+    top: '60%',
+    left: '80%',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(144, 224, 239, 0.9)',
   },
   curve: {
     position: 'absolute',

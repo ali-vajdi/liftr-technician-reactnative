@@ -1,16 +1,16 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -87,11 +87,23 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header with curved design */}
       <View style={styles.header}>
-        {/* Decorative lines pattern */}
+        {/* Galaxy-like circle patterns */}
         <View style={styles.patternContainer}>
-          <View style={styles.patternLine1} />
-          <View style={styles.patternLine2} />
-          <View style={styles.patternLine3} />
+          {/* Large galaxy circles */}
+          <View style={styles.galaxyCircle1} />
+          <View style={styles.galaxyCircle2} />
+          
+          {/* Medium stars */}
+          <View style={styles.star1} />
+          <View style={styles.star2} />
+          <View style={styles.star3} />
+          
+          {/* Small twinkling dots */}
+          <View style={styles.twinkle1} />
+          <View style={styles.twinkle2} />
+          <View style={styles.twinkle3} />
+          <View style={styles.twinkle4} />
+          <View style={styles.twinkle5} />
         </View>
         
         <View style={styles.headerContent}>
@@ -99,15 +111,15 @@ export default function LoginScreen() {
           <Text style={styles.subtitle}>شماره تلفن همراه خود را وارد کنید</Text>
         </View>
         
-        {/* Curved bottom border */}
+        {/* Simple curved bottom border */}
         <Svg
           width={width}
-          height={100}
+          height={50}
           style={styles.curve}
-          viewBox={`0 0 ${width} 100`}
+          viewBox={`0 0 ${width} 50`}
         >
           <Path
-            d={`M0,100 Q${width * 0.25},70 ${width * 0.5},80 Q${width * 0.75},60 ${width},70 L${width},100 Z`}
+            d={`M0,50 Q${width * 0.5},15 ${width},50 L${width},50 Z`}
             fill="#ffffff"
           />
         </Svg>
@@ -167,35 +179,100 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  patternLine1: {
+  // Large galaxy circles
+  galaxyCircle1: {
     position: 'absolute',
-    top: '25%',
-    left: '15%',
-    width: '50%',
-    height: 3,
-    backgroundColor: 'rgba(202, 240, 248, 0.4)',
-    borderRadius: 2,
-    transform: [{ rotate: '-15deg' }],
+    top: '15%',
+    left: '20%',
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    backgroundColor: 'rgba(202, 240, 248, 0.3)',
   },
-  patternLine2: {
-    position: 'absolute',
-    top: '45%',
-    right: '20%',
-    width: '40%',
-    height: 3,
-    backgroundColor: 'rgba(144, 224, 239, 0.5)',
-    borderRadius: 2,
-    transform: [{ rotate: '20deg' }],
-  },
-  patternLine3: {
+  galaxyCircle2: {
     position: 'absolute',
     top: '65%',
-    left: '25%',
-    width: '35%',
-    height: 3,
-    backgroundColor: 'rgba(0, 180, 216, 0.3)',
+    right: '25%',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(144, 224, 239, 0.4)',
+  },
+  
+  // Medium stars
+  star1: {
+    position: 'absolute',
+    top: '35%',
+    right: '40%',
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: 'rgba(202, 240, 248, 0.6)',
+  },
+  star2: {
+    position: 'absolute',
+    top: '50%',
+    left: '45%',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'rgba(144, 224, 239, 0.7)',
+  },
+  star3: {
+    position: 'absolute',
+    top: '80%',
+    right: '50%',
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0, 180, 216, 0.5)',
+  },
+  
+  // Small twinkling dots
+  twinkle1: {
+    position: 'absolute',
+    top: '25%',
+    right: '15%',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(202, 240, 248, 0.9)',
+  },
+  twinkle2: {
+    position: 'absolute',
+    top: '45%',
+    left: '15%',
+    width: 4,
+    height: 4,
     borderRadius: 2,
-    transform: [{ rotate: '-10deg' }],
+    backgroundColor: 'rgba(144, 224, 239, 0.8)',
+  },
+  twinkle3: {
+    position: 'absolute',
+    top: '70%',
+    right: '10%',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(0, 180, 216, 0.7)',
+  },
+  twinkle4: {
+    position: 'absolute',
+    top: '30%',
+    left: '60%',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(202, 240, 248, 0.9)',
+  },
+  twinkle5: {
+    position: 'absolute',
+    top: '85%',
+    right: '60%',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: 'rgba(144, 224, 239, 0.8)',
   },
   headerContent: {
     position: 'absolute',
