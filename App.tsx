@@ -9,6 +9,9 @@ import { PasswordScreen } from './screens/PasswordScreen';
 import { VerificationScreen } from './screens/VerificationScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LoadingProvider, useLoading } from './context/LoadingContext';
+import { LoadingModal } from './components/ui/LoadingModal';
+import { setLoadingCallback } from './services/api';
 import { fonts } from './fonts.config';
 import './global.css';
 
@@ -16,6 +19,7 @@ type AppState = 'welcome' | 'login' | 'password' | 'verification' | 'dashboard';
 
 function AppContent() {
   const { isAuthenticated, technician, isLoading: authLoading, login, sendOtp, verifyOtp, logout } = useAuth();
+  const { isLoading: apiLoading, showLoading, hideLoading, loadingMessage } = useLoading();
   const [currentScreen, setCurrentScreen] = useState<AppState>('welcome');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +30,17 @@ function AppContent() {
     title: '',
     message: ''
   });
+
+  // Connect axios loading callback
+  useEffect(() => {
+    setLoadingCallback((show: boolean, message?: string) => {
+      if (show) {
+        showLoading(message);
+      } else {
+        hideLoading();
+      }
+    });
+  }, [showLoading, hideLoading]);
 
   const showMessage = (type: 'success' | 'error', title: string, message: string) => {
     setMessageModal({ visible: true, type, title, message });
@@ -213,17 +228,11 @@ function AppContent() {
         {renderCurrentScreen()}
         <StatusBar style="dark" />
         
-        {/* Loading Overlay */}
-        {isLoading && (
-          <View className="absolute inset-0 bg-black/30 items-center justify-center">
-            <View className="bg-white rounded-2xl p-6 items-center">
-              <ActivityIndicator size="large" color="#0077B6" />
-              <Text className="text-gray-700 text-base font-yekan mt-3">
-                لطفاً صبر کنید...
-              </Text>
-            </View>
-          </View>
-        )}
+        {/* Loading Modal for API requests */}
+        <LoadingModal 
+          visible={apiLoading} 
+          message={loadingMessage}
+        />
 
         {/* Message Modal */}
         <Modal
@@ -362,7 +371,9 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <AppContent />
+      <LoadingProvider>
+        <AppContent />
+      </LoadingProvider>
     </AuthProvider>
   );
 }
