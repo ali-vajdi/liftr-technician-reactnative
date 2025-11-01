@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import type { Technician } from '../../types';
 
@@ -52,40 +53,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       slideAnim.setValue(300);
     }
   }, [visible, slideAnim, isAnimating]);
-  const menuItems = [
-    { 
-      id: 'profile', 
-      title: 'پروفایل من', 
-      onPress: () => {
-        handleClose();
-        // Navigate to profile screen
-      }
-    },
-    { 
-      id: 'settings', 
-      title: 'تنظیمات', 
-      onPress: () => {
-        handleClose();
-        // Navigate to settings screen
-      }
-    },
-    { 
-      id: 'support', 
-      title: 'پشتیبانی', 
-      onPress: () => {
-        handleClose();
-        // Navigate to support screen
-      }
-    },
-    { 
-      id: 'about', 
-      title: 'درباره ما', 
-      onPress: () => {
-        handleClose();
-        // Navigate to about screen
-      }
-    },
-  ];
 
   if (!visible && !isAnimating) {
     return null;
@@ -295,44 +262,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </View>
               </View>
 
-              {/* Menu Items - Minimal */}
-              <View style={{ paddingHorizontal: 20, paddingVertical: 8 }}>
-                {menuItems.map((item, index) => (
-                  <TouchableOpacity
-                    key={item.id}
-                    activeOpacity={0.7}
-                    onPress={item.onPress}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 16,
-                      borderBottomWidth: index < menuItems.length - 1 ? 1 : 0,
-                      borderBottomColor: '#F3F4F6'
-                    }}
-                  >
-                    <View style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      backgroundColor: '#D1D5DB',
-                      marginLeft: 12
-                    }} />
-                    <Text style={{ 
-                      flex: 1, 
-                      fontSize: 16, 
-                      color: '#1F2937', 
-                      fontFamily: 'Yekan', 
-                      textAlign: 'right' 
-                    }}>
-                      {item.title}
-                    </Text>
-                    <Text style={{ fontSize: 18, color: '#D1D5DB' }}>←</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
               {/* Logout Button - Minimal */}
-              <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}>
+              <View style={{ paddingHorizontal: 20, paddingTop: 24, paddingBottom: 24 }}>
                 <TouchableOpacity
                   onPress={onLogout}
                   activeOpacity={0.8}
@@ -347,14 +278,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     borderColor: '#FEE2E2'
                   }}
                 >
-                  <View style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 2,
-                    backgroundColor: '#DC2626',
-                    marginLeft: 8,
-                    transform: [{ rotate: '45deg' }]
-                  }} />
+                  <Ionicons 
+                    name="log-out-outline" 
+                    size={20} 
+                    color="#DC2626" 
+                    style={{ marginLeft: 8 }} 
+                  />
                   <Text style={{ color: '#DC2626', fontSize: 15, fontFamily: 'YekanBold' }}>
                     خروج
                   </Text>
