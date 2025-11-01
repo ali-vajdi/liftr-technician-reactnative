@@ -15,7 +15,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
   onBack, 
   onResend 
 }) => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const inputRefs = useRef<TextInput[]>([]);
 
@@ -47,12 +47,12 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
     setCode(newCode);
 
     // Auto-focus next input
-    if (value && index < 3) {
+    if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
     // Check if all digits are entered
-    if (newCode.every(digit => digit !== '') && newCode.join('').length === 4) {
+    if (newCode.every(digit => digit !== '') && newCode.join('').length === 6) {
       handleVerify(newCode.join(''));
     }
   };
@@ -64,13 +64,13 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
   };
 
   const handleVerify = (verificationCode: string) => {
-    if (verificationCode.length !== 4) {
-      Alert.alert('خطا', 'لطفاً کد ۴ رقمی را کامل وارد کنید');
+    if (verificationCode.length !== 6) {
+      Alert.alert('خطا', 'لطفاً کد ۶ رقمی را کامل وارد کنید');
       return;
     }
 
     // Here you would typically validate the code with your backend
-    // For now, we'll accept any 4-digit code
+    // For now, we'll accept any 6-digit code
     onVerify(verificationCode);
   };
 
@@ -81,7 +81,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
     }
     
     setTimeLeft(120);
-    setCode(['', '', '', '']);
+    setCode(['', '', '', '', '', '']);
     onResend();
   };
 
@@ -129,10 +129,10 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
             {/* Code Input Form */}
             <View>
               <Text className="text-gray-700 text-sm font-yekan mb-4 text-center">
-                کد تأیید ۴ رقمی
+                کد تأیید ۶ رقمی
               </Text>
               
-              <View className="flex-row justify-center mb-6">
+              <View className="flex-row justify-center mb-6 flex-wrap">
                 {code.map((digit, index) => (
                   <TextInput
                     key={index}
@@ -144,7 +144,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
                     onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
                     keyboardType="number-pad"
                     maxLength={1}
-                    className="w-14 h-16 mx-2 text-center text-2xl font-yekan-bold rounded-2xl bg-gray-50 text-gray-900"
+                    className="w-12 h-14 mx-1 text-center text-xl font-yekan-bold rounded-2xl bg-gray-50 text-gray-900"
                     style={{ 
                       borderWidth: 2,
                       borderColor: digit ? '#0077B6' : '#F3F4F6'
