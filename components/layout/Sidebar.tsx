@@ -83,7 +83,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           }}
         >
           <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+              style={{ flex: 1 }} 
+              showsVerticalScrollIndicator={false}
+            >
               {/* Header Section - Minimal */}
               <View style={{ 
                 backgroundColor: '#0077B6', 

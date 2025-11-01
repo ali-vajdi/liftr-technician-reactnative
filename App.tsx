@@ -19,6 +19,7 @@ function AppContent() {
   const [currentScreen, setCurrentScreen] = useState<AppState>('welcome');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [activePage, setActivePage] = useState<'reports' | 'home' | 'settings'>('home');
   const [messageModal, setMessageModal] = useState<{ visible: boolean; type: 'success' | 'error'; title: string; message: string }>({
     visible: false,
     type: 'success',
@@ -143,6 +144,12 @@ function AppContent() {
     }
   };
 
+  const handleNavigate = (page: 'reports' | 'home' | 'settings') => {
+    setActivePage(page);
+    // TODO: Implement page navigation logic
+    // This can be extended to show different content based on the selected page
+  };
+
   const renderCurrentScreen = () => {
     switch (currentScreen) {
       case 'welcome':
@@ -177,6 +184,8 @@ function AppContent() {
           <DashboardScreen
             phoneNumber={phoneNumber}
             onLogout={handleLogout}
+            onNavigate={handleNavigate}
+            activePage={activePage}
           />
         );
       default:
