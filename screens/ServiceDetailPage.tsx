@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../context/AuthContext';
 import { getServiceDetail } from '../services/buildingService';
 import type { ServiceDetail } from '../types';
+import { ChecklistPage } from './ChecklistPage';
+import { SignaturePage } from './SignaturePage';
+
+type ChecklistFlowState = 
+  | 'detail'
+  | 'checklist'
+  | 'manager-signature'
+  | 'technician-signature';
 
 interface ServiceDetailPageProps {
   serviceId: number;
@@ -10,9 +19,12 @@ interface ServiceDetailPageProps {
 }
 
 export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId, onBack }) => {
+  const { technician } = useAuth();
   const [serviceDetail, setServiceDetail] = useState<ServiceDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [flowState, setFlowState] = useState<ChecklistFlowState>('detail');
+  const [currentElevatorIndex, setCurrentElevatorIndex] = useState(0);
 
   useEffect(() => {
     loadServiceDetail();
@@ -52,6 +64,56 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
     });
   };
 
+  const handleStartChecklist = () => {
+    if (!serviceDetail?.building?.elevators || serviceDetail.building.elevators.length === 0) {
+      return;
+    }
+    setCurrentElevatorIndex(0);
+    setFlowState('checklist');
+  };
+
+  const handleChecklistNext = () => {
+    setFlowState('manager-signature');
+  };
+
+  const handleManagerSignatureNext = () => {
+    setFlowState('technician-signature');
+  };
+
+  const handleTechnicianSignatureNext = () => {
+    const elevators = serviceDetail?.building?.elevators || [];
+    if (currentElevatorIndex < elevators.length - 1) {
+      // Move to next elevator
+      setCurrentElevatorIndex(currentElevatorIndex + 1);
+      setFlowState('checklist');
+    } else {
+      // All elevators completed, go back to detail
+      setFlowState('detail');
+      setCurrentElevatorIndex(0);
+    }
+  };
+
+  const handleFlowBack = () => {
+    switch (flowState) {
+      case 'checklist':
+        setFlowState('detail');
+        break;
+      case 'manager-signature':
+        setFlowState('checklist');
+        break;
+      case 'technician-signature':
+        setFlowState('manager-signature');
+        break;
+      default:
+        onBack();
+    }
+  };
+
+  const getCurrentElevator = () => {
+    const elevators = serviceDetail?.building?.elevators || [];
+    return elevators[currentElevatorIndex];
+  };
+
   if (loading) {
     return (
       <View className="flex-1 bg-gray-50 items-center justify-center" style={{ paddingBottom: 100 }}>
@@ -85,6 +147,157 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
 
   const building = serviceDetail.building;
 
+  // Render flow states
+  if (flowState === 'checklist') {
+    const elevator = getCurrentElevator();
+    if (!elevator) {
+      setFlowState('detail');
+      return null;
+    }
+    return (
+      <>
+        <View style={{
+          backgroundColor: 'white',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: '#F3F4F6',
+          flexDirection: 'row-reverse',
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            onPress={handleFlowBack}
+            activeOpacity={0.7}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: '#F3F4F6',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 12,
+            }}
+          >
+            <Ionicons name="arrow-forward" size={20} color="#4B5563" />
+          </TouchableOpacity>
+          <Text style={{
+            fontSize: 18,
+            fontFamily: 'YekanBold',
+            color: '#1F2937',
+            textAlign: 'right',
+            flex: 1,
+          }}>
+            چک لیست
+          </Text>
+        </View>
+        <ChecklistPage
+          buildingName={building.name}
+          elevatorName={elevator.name}
+          onNext={handleChecklistNext}
+        />
+      </>
+    );
+  }
+
+  if (flowState === 'manager-signature') {
+    return (
+      <>
+        <View style={{
+          backgroundColor: 'white',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: '#F3F4F6',
+          flexDirection: 'row-reverse',
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            onPress={handleFlowBack}
+            activeOpacity={0.7}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: '#F3F4F6',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 12,
+            }}
+          >
+            <Ionicons name="arrow-forward" size={20} color="#4B5563" />
+          </TouchableOpacity>
+          <Text style={{
+            fontSize: 18,
+            fontFamily: 'YekanBold',
+            color: '#1F2937',
+            textAlign: 'right',
+            flex: 1,
+          }}>
+            امضای نماینده/مدیر ساختمان
+          </Text>
+        </View>
+        <SignaturePage
+          key="manager-signature"
+          title="محل امضا نماینده/مدیر ساختمان"
+          nameLabel="آقا/خانم"
+          onNext={handleManagerSignatureNext}
+          onBack={handleFlowBack}
+        />
+      </>
+    );
+  }
+
+  if (flowState === 'technician-signature') {
+    return (
+      <>
+        <View style={{
+          backgroundColor: 'white',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: '#F3F4F6',
+          flexDirection: 'row-reverse',
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            onPress={handleFlowBack}
+            activeOpacity={0.7}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: '#F3F4F6',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 12,
+            }}
+          >
+            <Ionicons name="arrow-forward" size={20} color="#4B5563" />
+          </TouchableOpacity>
+          <Text style={{
+            fontSize: 18,
+            fontFamily: 'YekanBold',
+            color: '#1F2937',
+            textAlign: 'right',
+            flex: 1,
+          }}>
+            امضای سرویس کار
+          </Text>
+        </View>
+        <SignaturePage
+          key="technician-signature"
+          title="محل امضا سرویس کار"
+          nameLabel="نام سرویس کار"
+          defaultName={technician?.full_name || `${technician?.first_name || ''} ${technician?.last_name || ''}`.trim() || technician?.name || ''}
+          showGenderSelector={false}
+          onNext={handleTechnicianSignatureNext}
+          onBack={handleFlowBack}
+        />
+      </>
+    );
+  }
+
+  // Default detail view
   return (
     <ScrollView 
       className="flex-1 bg-gray-50" 
@@ -365,6 +578,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
 
       {/* Register Checklist Button */}
       <TouchableOpacity
+        onPress={handleStartChecklist}
         activeOpacity={0.8}
         style={{
           backgroundColor: '#0077B6',
