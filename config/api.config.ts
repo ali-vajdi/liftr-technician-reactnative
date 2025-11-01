@@ -25,5 +25,7 @@ export const API_ENDPOINTS = {
     CHECK_AUTH: '/technician/check-auth',
     PROFILE: '/technician/profile',
   },
+  ASSIGNED_BUILDINGS: '/technician/services/assigned-buildings',
+  SERVICE_DETAIL: (serviceId: number) => `/technician/services/${serviceId}`,
 };
 

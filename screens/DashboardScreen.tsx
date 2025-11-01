@@ -10,6 +10,7 @@ import { LogoutModal } from '../components/ui/LogoutModal';
 import { HomePage } from './HomePage';
 import { ReportsPage } from './ReportsPage';
 import { SettingsPage } from './SettingsPage';
+import { ServiceDetailPage } from './ServiceDetailPage';
 
 interface DashboardScreenProps {
   phoneNumber: string;
@@ -29,6 +30,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
   const [technician, setTechnician] = useState(contextTechnician);
   const [loading, setLoading] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
 
   useEffect(() => {
     loadProfile();
@@ -63,6 +65,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   };
 
   const getHeaderTitle = () => {
+    if (selectedServiceId) {
+      return 'جزئیات سرویس';
+    }
     switch (activePage) {
       case 'reports':
         return 'گزارش‌ها';
@@ -74,7 +79,24 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     }
   };
 
+  const handleBuildingPress = (serviceId: number) => {
+    setSelectedServiceId(serviceId);
+  };
+
+  const handleBackFromDetail = () => {
+    setSelectedServiceId(null);
+  };
+
   const renderPage = () => {
+    if (selectedServiceId) {
+      return (
+        <ServiceDetailPage 
+          serviceId={selectedServiceId}
+          onBack={handleBackFromDetail}
+        />
+      );
+    }
+
     switch (activePage) {
       case 'reports':
         return <ReportsPage />;
@@ -88,7 +110,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         );
       case 'home':
       default:
-        return <HomePage />;
+        return <HomePage onBuildingPress={handleBuildingPress} />;
     }
   };
 
@@ -96,7 +118,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top', 'left', 'right']}>
       <Header 
         title={getHeaderTitle()} 
-        onMenuPress={() => setSidebarVisible(true)} 
+        onMenuPress={() => setSidebarVisible(true)}
+        onBackPress={handleBackFromDetail}
+        showBack={!!selectedServiceId}
       />
 
       {/* Page Content */}
@@ -120,7 +144,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         onCancel={cancelLogout}
       />
 
-      {/* Sticky Bottom Navigation */}
+      {/* Sticky Bottom Navigation - Hide when viewing service detail */}
+      {!selectedServiceId && (
       <View style={{
         position: 'absolute',
         bottom: 0,
@@ -237,6 +262,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </Text>
         </TouchableOpacity>
       </View>
+      )}
     </SafeAreaView>
   );
 };
