@@ -1,29 +1,75 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import type { ChecklistItem } from '../types';
+
+export interface SavedDescription {
+  checklistId: number;
+  title: string;
+  description: string;
+}
 
 interface ChecklistPageProps {
   buildingName: string;
   elevatorName: string;
+  checklistItems: ChecklistItem[];
+  descriptionChecklists: ChecklistItem[];
+  savedDescriptions: SavedDescription[];
+  isVerified: boolean;
+  onAddDescription: (description: SavedDescription) => void;
+  onDeleteDescription: (index: number) => void;
+  onToggleVerification: (verified: boolean) => void;
   onNext: () => void;
 }
 
 export const ChecklistPage: React.FC<ChecklistPageProps> = ({ 
   buildingName, 
-  elevatorName, 
+  elevatorName,
+  checklistItems,
+  descriptionChecklists,
+  savedDescriptions,
+  isVerified,
+  onAddDescription,
+  onDeleteDescription,
+  onToggleVerification,
   onNext 
 }) => {
-  const [itemsChecked, setItemsChecked] = useState<boolean[]>([false, false, false, false, false, false, false, false, false, false]);
-  const [isVerified, setIsVerified] = useState(false);
-
-  const toggleItem = (index: number) => {
-    const newChecked = [...itemsChecked];
-    newChecked[index] = !newChecked[index];
-    setItemsChecked(newChecked);
-  };
+  const [showDescriptionListModal, setShowDescriptionListModal] = useState(false);
+  const [showWriteDescriptionModal, setShowWriteDescriptionModal] = useState(false);
+  const [selectedDescriptionChecklist, setSelectedDescriptionChecklist] = useState<ChecklistItem | null>(null);
+  const [descriptionText, setDescriptionText] = useState('');
 
   const toggleVerification = () => {
-    setIsVerified(!isVerified);
+    onToggleVerification(!isVerified);
+  };
+
+  const handleAddDescriptionClick = () => {
+    setShowDescriptionListModal(true);
+  };
+
+  const handleSelectDescriptionChecklist = (item: ChecklistItem) => {
+    setSelectedDescriptionChecklist(item);
+    setDescriptionText('');
+    setShowDescriptionListModal(false);
+    setShowWriteDescriptionModal(true);
+  };
+
+  const handleSubmitDescription = () => {
+    if (selectedDescriptionChecklist && descriptionText.trim()) {
+      const newDescription: SavedDescription = {
+        checklistId: selectedDescriptionChecklist.id,
+        title: selectedDescriptionChecklist.title,
+        description: descriptionText.trim(),
+      };
+      onAddDescription(newDescription);
+      setShowWriteDescriptionModal(false);
+      setSelectedDescriptionChecklist(null);
+      setDescriptionText('');
+    }
+  };
+
+  const handleDeleteDescription = (index: number) => {
+    onDeleteDescription(index);
   };
 
   return (
@@ -97,50 +143,123 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
           style={{ maxHeight: 400 }}
           showsVerticalScrollIndicator={true}
         >
-          {itemsChecked.map((checked, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => toggleItem(index)}
-              activeOpacity={0.7}
+          {checklistItems.map((item, index) => (
+            <View
+              key={item.id}
               style={{
                 flexDirection: 'row-reverse',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 paddingVertical: 14,
-                borderBottomWidth: index < itemsChecked.length - 1 ? 1 : 0,
+                borderBottomWidth: index < checklistItems.length - 1 ? 1 : 0,
                 borderBottomColor: '#F3F4F6',
               }}
             >
+              <View style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                backgroundColor: '#EFF6FF',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: 12,
+                flexShrink: 0,
+              }}>
+                <Text style={{
+                  fontSize: 13,
+                  fontFamily: 'YekanBold',
+                  color: '#0077B6',
+                }}>
+                  {item.order}
+                </Text>
+              </View>
               <Text style={{
                 flex: 1,
                 fontSize: 15,
                 fontFamily: 'Yekan',
                 color: '#1F2937',
                 textAlign: 'right',
-                marginRight: 12,
+                lineHeight: 24,
               }}>
-                {index + 1}
+                {item.title}
               </Text>
-              <View style={{
-                width: 24,
-                height: 24,
-                borderRadius: 6,
-                borderWidth: 2,
-                borderColor: checked ? '#0077B6' : '#D1D5DB',
-                backgroundColor: checked ? '#0077B6' : 'white',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                {checked && (
-                  <Ionicons name="checkmark" size={16} color="white" />
-                )}
-              </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </ScrollView>
       </View>
 
-      {/* Description Button */}
+      {/* Saved Descriptions List */}
+      {savedDescriptions.length > 0 && (
+        <View style={{
+          backgroundColor: 'white',
+          borderRadius: 16,
+          padding: 16,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: '#F3F4F6',
+        }}>
+          <Text style={{
+            fontSize: 16,
+            fontFamily: 'YekanBold',
+            color: '#1F2937',
+            textAlign: 'right',
+            marginBottom: 12,
+          }}>
+            توضیحات ثبت شده
+          </Text>
+          {savedDescriptions.map((desc, index) => (
+            <View
+              key={index}
+              style={{
+                flexDirection: 'row-reverse',
+                alignItems: 'flex-start',
+                paddingVertical: 12,
+                borderBottomWidth: index < savedDescriptions.length - 1 ? 1 : 0,
+                borderBottomColor: '#F3F4F6',
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => handleDeleteDescription(index)}
+                activeOpacity={0.7}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: '#FEF2F2',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: 12,
+                }}
+              >
+                <Ionicons name="trash-outline" size={18} color="#EF4444" />
+              </TouchableOpacity>
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontSize: 14,
+                  fontFamily: 'YekanBold',
+                  color: '#0077B6',
+                  textAlign: 'right',
+                  marginBottom: 4,
+                }}>
+                  {desc.title}
+                </Text>
+                <Text style={{
+                  fontSize: 13,
+                  fontFamily: 'Yekan',
+                  color: '#6B7280',
+                  textAlign: 'right',
+                  lineHeight: 20,
+                }}>
+                  {desc.description}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Add Description Button */}
       <TouchableOpacity
+        onPress={handleAddDescriptionClick}
         activeOpacity={0.7}
         style={{
           backgroundColor: 'white',
@@ -154,13 +273,13 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
           justifyContent: 'center',
         }}
       >
-        <Ionicons name="document-text-outline" size={20} color="#0077B6" style={{ marginLeft: 8 }} />
+        <Ionicons name="add-circle-outline" size={20} color="#0077B6" style={{ marginLeft: 8 }} />
         <Text style={{
           fontSize: 15,
           fontFamily: 'YekanBold',
           color: '#0077B6',
         }}>
-          توضیحات
+          افزودن توضیحات
         </Text>
       </TouchableOpacity>
 
@@ -234,6 +353,248 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
           </Text>
         </TouchableOpacity>
       )}
+
+      {/* Description List Modal */}
+      <Modal
+        visible={showDescriptionListModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowDescriptionListModal(false)}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setShowDescriptionListModal(false)}
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+              width: '100%',
+              maxWidth: 400,
+              maxHeight: '80%',
+            }}
+          >
+            <View style={{
+              flexDirection: 'row-reverse',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}>
+              <Text style={{
+                fontSize: 18,
+                fontFamily: 'YekanBold',
+                color: '#1F2937',
+                textAlign: 'right',
+              }}>
+                انتخاب مورد توضیحات
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowDescriptionListModal(false)}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={true}>
+              {descriptionChecklists.map((item, index) => (
+                <TouchableOpacity
+                  key={item.id}
+                  onPress={() => handleSelectDescriptionChecklist(item)}
+                  activeOpacity={0.7}
+                  style={{
+                    flexDirection: 'row-reverse',
+                    alignItems: 'center',
+                    paddingVertical: 14,
+                    paddingHorizontal: 12,
+                    borderBottomWidth: index < descriptionChecklists.length - 1 ? 1 : 0,
+                    borderBottomColor: '#F3F4F6',
+                  }}
+                >
+                  <View style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 14,
+                    backgroundColor: '#EFF6FF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginLeft: 12,
+                    flexShrink: 0,
+                  }}>
+                    <Text style={{
+                      fontSize: 13,
+                      fontFamily: 'YekanBold',
+                      color: '#0077B6',
+                    }}>
+                      {item.order}
+                    </Text>
+                  </View>
+                  <Text style={{
+                    flex: 1,
+                    fontSize: 15,
+                    fontFamily: 'Yekan',
+                    color: '#1F2937',
+                    textAlign: 'right',
+                  }}>
+                    {item.title}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color="#9CA3AF" style={{ marginRight: 8 }} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Write Description Modal */}
+      <Modal
+        visible={showWriteDescriptionModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowWriteDescriptionModal(false)}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setShowWriteDescriptionModal(false)}
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+              width: '100%',
+              maxWidth: 400,
+            }}
+          >
+            <View style={{
+              flexDirection: 'row-reverse',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}>
+              <Text style={{
+                fontSize: 18,
+                fontFamily: 'YekanBold',
+                color: '#1F2937',
+                textAlign: 'right',
+                flex: 1,
+              }}>
+                {selectedDescriptionChecklist?.title}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowWriteDescriptionModal(false);
+                  setSelectedDescriptionChecklist(null);
+                  setDescriptionText('');
+                }}
+                activeOpacity={0.7}
+                style={{ marginRight: 8 }}
+              >
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+            <Text style={{
+              fontSize: 14,
+              fontFamily: 'Yekan',
+              color: '#6B7280',
+              textAlign: 'right',
+              marginBottom: 12,
+            }}>
+              توضیحات خود را وارد کنید:
+            </Text>
+            <TextInput
+              value={descriptionText}
+              onChangeText={setDescriptionText}
+              placeholder="توضیحات را وارد کنید..."
+              placeholderTextColor="#9CA3AF"
+              multiline
+              numberOfLines={6}
+              style={{
+                backgroundColor: '#F9FAFB',
+                borderRadius: 12,
+                padding: 14,
+                fontSize: 15,
+                fontFamily: 'Yekan',
+                color: '#1F2937',
+                textAlign: 'right',
+                textAlignVertical: 'top',
+                borderWidth: 1,
+                borderColor: '#E5E7EB',
+                minHeight: 120,
+                marginBottom: 16,
+              }}
+            />
+            <View style={{
+              flexDirection: 'row-reverse',
+              gap: 12,
+            }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowWriteDescriptionModal(false);
+                  setSelectedDescriptionChecklist(null);
+                  setDescriptionText('');
+                }}
+                activeOpacity={0.7}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#F3F4F6',
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{
+                  fontSize: 15,
+                  fontFamily: 'YekanBold',
+                  color: '#6B7280',
+                }}>
+                  انصراف
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSubmitDescription}
+                activeOpacity={0.8}
+                disabled={!descriptionText.trim()}
+                style={{
+                  flex: 1,
+                  backgroundColor: descriptionText.trim() ? '#0077B6' : '#D1D5DB',
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{
+                  fontSize: 15,
+                  fontFamily: 'YekanBold',
+                  color: 'white',
+                }}>
+                  ثبت
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </ScrollView>
   );
 };

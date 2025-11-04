@@ -3,9 +3,15 @@ import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getServiceDetail } from '../services/buildingService';
-import type { ServiceDetail } from '../types';
+import type { ServiceDetail, ChecklistItem } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage } from './SignaturePage';
+
+interface SavedDescription {
+  checklistId: number;
+  title: string;
+  description: string;
+}
 
 type ChecklistFlowState = 
   | 'detail'
@@ -21,10 +27,16 @@ interface ServiceDetailPageProps {
 export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId, onBack }) => {
   const { technician } = useAuth();
   const [serviceDetail, setServiceDetail] = useState<ServiceDetail | null>(null);
+  const [checklists, setChecklists] = useState<ChecklistItem[]>([]);
+  const [descriptionChecklists, setDescriptionChecklists] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [flowState, setFlowState] = useState<ChecklistFlowState>('detail');
   const [currentElevatorIndex, setCurrentElevatorIndex] = useState(0);
+  // Store descriptions per elevator ID
+  const [elevatorDescriptions, setElevatorDescriptions] = useState<Record<number, SavedDescription[]>>({});
+  // Store verification state per elevator ID
+  const [elevatorVerified, setElevatorVerified] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     loadServiceDetail();
@@ -37,6 +49,18 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       const response = await getServiceDetail(serviceId);
       if (response.success && response.data) {
         setServiceDetail(response.data);
+        // Store checklists if available
+        if (response.checklists && Array.isArray(response.checklists)) {
+          // Sort by order to ensure correct sequence
+          const sortedChecklists = [...response.checklists].sort((a, b) => a.order - b.order);
+          setChecklists(sortedChecklists);
+        }
+        // Store description checklists if available
+        if (response.description_checklists && Array.isArray(response.description_checklists)) {
+          // Sort by order to ensure correct sequence
+          const sortedDescriptionChecklists = [...response.description_checklists].sort((a, b) => a.order - b.order);
+          setDescriptionChecklists(sortedDescriptionChecklists);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'خطا در بارگذاری جزئیات سرویس');
@@ -73,7 +97,15 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   };
 
   const handleChecklistNext = () => {
-    setFlowState('manager-signature');
+    const elevators = serviceDetail?.building?.elevators || [];
+    if (currentElevatorIndex < elevators.length - 1) {
+      // Move to next elevator checklist
+      setCurrentElevatorIndex(currentElevatorIndex + 1);
+      setFlowState('checklist');
+    } else {
+      // All elevators completed, go to manager signature
+      setFlowState('manager-signature');
+    }
   };
 
   const handleManagerSignatureNext = () => {
@@ -81,24 +113,27 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   };
 
   const handleTechnicianSignatureNext = () => {
-    const elevators = serviceDetail?.building?.elevators || [];
-    if (currentElevatorIndex < elevators.length - 1) {
-      // Move to next elevator
-      setCurrentElevatorIndex(currentElevatorIndex + 1);
-      setFlowState('checklist');
-    } else {
-      // All elevators completed, go back to detail
-      setFlowState('detail');
-      setCurrentElevatorIndex(0);
-    }
+    // All signatures completed, go back to detail
+    setFlowState('detail');
+    setCurrentElevatorIndex(0);
   };
 
   const handleFlowBack = () => {
     switch (flowState) {
       case 'checklist':
-        setFlowState('detail');
+        if (currentElevatorIndex > 0) {
+          // Go back to previous elevator checklist
+          setCurrentElevatorIndex(currentElevatorIndex - 1);
+          setFlowState('checklist');
+        } else {
+          // On first elevator, go back to detail
+          setFlowState('detail');
+        }
         break;
       case 'manager-signature':
+        // Go back to last elevator checklist
+        const elevators = serviceDetail?.building?.elevators || [];
+        setCurrentElevatorIndex(elevators.length - 1);
         setFlowState('checklist');
         break;
       case 'technician-signature':
@@ -112,6 +147,27 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   const getCurrentElevator = () => {
     const elevators = serviceDetail?.building?.elevators || [];
     return elevators[currentElevatorIndex];
+  };
+
+  const handleAddDescription = (elevatorId: number, description: SavedDescription) => {
+    setElevatorDescriptions(prev => ({
+      ...prev,
+      [elevatorId]: [...(prev[elevatorId] || []), description],
+    }));
+  };
+
+  const handleDeleteDescription = (elevatorId: number, index: number) => {
+    setElevatorDescriptions(prev => ({
+      ...prev,
+      [elevatorId]: (prev[elevatorId] || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleToggleVerification = (elevatorId: number, verified: boolean) => {
+    setElevatorVerified(prev => ({
+      ...prev,
+      [elevatorId]: verified,
+    }));
   };
 
   if (loading) {
@@ -154,6 +210,13 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       setFlowState('detail');
       return null;
     }
+    const elevators = serviceDetail?.building?.elevators || [];
+    const elevatorNumber = currentElevatorIndex + 1;
+    const totalElevators = elevators.length;
+    const headerTitle = totalElevators > 1 
+      ? `چک لیست - آسانسور ${elevatorNumber} از ${totalElevators}`
+      : 'چک لیست';
+    
     return (
       <>
         <View style={{
@@ -187,12 +250,20 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             textAlign: 'right',
             flex: 1,
           }}>
-            چک لیست
+            {headerTitle}
           </Text>
         </View>
         <ChecklistPage
+          key={`elevator-${elevator.id}-${currentElevatorIndex}`}
           buildingName={building.name}
           elevatorName={elevator.name}
+          checklistItems={checklists}
+          descriptionChecklists={descriptionChecklists}
+          savedDescriptions={elevatorDescriptions[elevator.id] || []}
+          isVerified={elevatorVerified[elevator.id] || false}
+          onAddDescription={(description) => handleAddDescription(elevator.id, description)}
+          onDeleteDescription={(index) => handleDeleteDescription(elevator.id, index)}
+          onToggleVerification={(verified) => handleToggleVerification(elevator.id, verified)}
           onNext={handleChecklistNext}
         />
       </>

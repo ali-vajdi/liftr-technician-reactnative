@@ -145,8 +145,16 @@ export interface ServiceDetail {
   building: ServiceBuilding;
 }
 
+export interface ChecklistItem {
+  id: number;
+  title: string;
+  order: number;
+}
+
 export interface ServiceDetailResponse {
   success: boolean;
   data: ServiceDetail;
+  checklists?: ChecklistItem[];
+  description_checklists?: ChecklistItem[];
 }
 
