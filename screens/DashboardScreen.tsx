@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
 import { Header } from '../components/layout/Header';
-import { Sidebar } from '../components/layout/Sidebar';
 import { LogoutModal } from '../components/ui/LogoutModal';
 import { HomePage } from './HomePage';
 import { ReportsPage } from './ReportsPage';
@@ -26,7 +25,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   activePage = 'home',
 }) => {
   const { technician: contextTechnician } = useAuth();
-  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
   const [technician, setTechnician] = useState(contextTechnician);
   const [loading, setLoading] = useState(false);
@@ -49,10 +47,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   };
 
   const handleLogout = () => {
-    setSidebarVisible(false);
-    setTimeout(() => {
-      setLogoutConfirmVisible(true);
-    }, 100);
+    setLogoutConfirmVisible(true);
   };
 
   const confirmLogout = () => {
@@ -118,7 +113,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top', 'left', 'right']}>
       <Header 
         title={getHeaderTitle()} 
-        onMenuPress={() => setSidebarVisible(true)}
         onBackPress={handleBackFromDetail}
         showBack={!!selectedServiceId}
       />
@@ -127,15 +121,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       <View className="flex-1">
         {renderPage()}
       </View>
-
-      {/* Sidebar */}
-      <Sidebar
-        visible={sidebarVisible}
-        onClose={() => setSidebarVisible(false)}
-        onLogout={handleLogout}
-        technician={technician}
-        phoneNumber={phoneNumber}
-      />
 
       {/* Logout Confirmation Modal */}
       <LogoutModal
