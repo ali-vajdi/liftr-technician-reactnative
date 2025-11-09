@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { ChecklistItem } from '../types';
 
@@ -35,9 +35,6 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
   onNext 
 }) => {
   const [showDescriptionListModal, setShowDescriptionListModal] = useState(false);
-  const [showWriteDescriptionModal, setShowWriteDescriptionModal] = useState(false);
-  const [selectedDescriptionChecklist, setSelectedDescriptionChecklist] = useState<ChecklistItem | null>(null);
-  const [descriptionText, setDescriptionText] = useState('');
 
   const toggleVerification = () => {
     onToggleVerification(!isVerified);
@@ -48,24 +45,13 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
   };
 
   const handleSelectDescriptionChecklist = (item: ChecklistItem) => {
-    setSelectedDescriptionChecklist(item);
-    setDescriptionText('');
+    const newDescription: SavedDescription = {
+      checklistId: item.id,
+      title: item.title,
+      description: item.title,
+    };
+    onAddDescription(newDescription);
     setShowDescriptionListModal(false);
-    setShowWriteDescriptionModal(true);
-  };
-
-  const handleSubmitDescription = () => {
-    if (selectedDescriptionChecklist && descriptionText.trim()) {
-      const newDescription: SavedDescription = {
-        checklistId: selectedDescriptionChecklist.id,
-        title: selectedDescriptionChecklist.title,
-        description: descriptionText.trim(),
-      };
-      onAddDescription(newDescription);
-      setShowWriteDescriptionModal(false);
-      setSelectedDescriptionChecklist(null);
-      setDescriptionText('');
-    }
   };
 
   const handleDeleteDescription = (index: number) => {
@@ -455,146 +441,6 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         </TouchableOpacity>
       </Modal>
 
-      {/* Write Description Modal */}
-      <Modal
-        visible={showWriteDescriptionModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowWriteDescriptionModal(false)}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setShowWriteDescriptionModal(false)}
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 20,
-          }}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 20,
-              width: '100%',
-              maxWidth: 400,
-            }}
-          >
-            <View style={{
-              flexDirection: 'row-reverse',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 16,
-            }}>
-              <Text style={{
-                fontSize: 18,
-                fontFamily: 'YekanBold',
-                color: '#1F2937',
-                textAlign: 'right',
-                flex: 1,
-              }}>
-                {selectedDescriptionChecklist?.title}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowWriteDescriptionModal(false);
-                  setSelectedDescriptionChecklist(null);
-                  setDescriptionText('');
-                }}
-                activeOpacity={0.7}
-                style={{ marginRight: 8 }}
-              >
-                <Ionicons name="close" size={24} color="#6B7280" />
-              </TouchableOpacity>
-            </View>
-            <Text style={{
-              fontSize: 14,
-              fontFamily: 'Yekan',
-              color: '#6B7280',
-              textAlign: 'right',
-              marginBottom: 12,
-            }}>
-              توضیحات خود را وارد کنید:
-            </Text>
-            <TextInput
-              value={descriptionText}
-              onChangeText={setDescriptionText}
-              placeholder="توضیحات را وارد کنید..."
-              placeholderTextColor="#9CA3AF"
-              multiline
-              numberOfLines={6}
-              style={{
-                backgroundColor: '#F9FAFB',
-                borderRadius: 12,
-                padding: 14,
-                fontSize: 15,
-                fontFamily: 'Yekan',
-                color: '#1F2937',
-                textAlign: 'right',
-                textAlignVertical: 'top',
-                borderWidth: 1,
-                borderColor: '#E5E7EB',
-                minHeight: 120,
-                marginBottom: 16,
-              }}
-            />
-            <View style={{
-              flexDirection: 'row-reverse',
-              gap: 12,
-            }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowWriteDescriptionModal(false);
-                  setSelectedDescriptionChecklist(null);
-                  setDescriptionText('');
-                }}
-                activeOpacity={0.7}
-                style={{
-                  flex: 1,
-                  backgroundColor: '#F3F4F6',
-                  borderRadius: 12,
-                  paddingVertical: 14,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text style={{
-                  fontSize: 15,
-                  fontFamily: 'YekanBold',
-                  color: '#6B7280',
-                }}>
-                  انصراف
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSubmitDescription}
-                activeOpacity={0.8}
-                disabled={!descriptionText.trim()}
-                style={{
-                  flex: 1,
-                  backgroundColor: descriptionText.trim() ? '#0077B6' : '#D1D5DB',
-                  borderRadius: 12,
-                  paddingVertical: 14,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text style={{
-                  fontSize: 15,
-                  fontFamily: 'YekanBold',
-                  color: 'white',
-                }}>
-                  ثبت
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
     </ScrollView>
   );
 };

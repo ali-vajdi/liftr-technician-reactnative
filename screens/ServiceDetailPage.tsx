@@ -310,7 +310,8 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         <SignaturePage
           key="manager-signature"
           title="محل امضا نماینده/مدیر ساختمان"
-          nameLabel="آقا/خانم"
+          nameLabel="نام نماینده/مدیر ساختمان"
+          showGenderSelector={false}
           onNext={handleManagerSignatureNext}
           onBack={handleFlowBack}
         />
