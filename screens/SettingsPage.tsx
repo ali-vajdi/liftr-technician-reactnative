@@ -157,7 +157,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             <>
               <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
               <InfoRow
-                label="سازمان"
+                label="شرکت"
                 value={technician?.organization_name || technician?.organization?.name || 'نامشخص'}
                 icon="business-outline"
               />

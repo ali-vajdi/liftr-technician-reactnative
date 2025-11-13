@@ -239,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         textAlign: 'left',
                         marginLeft: 8
                       }}>
-                        سازمان
+                        شرکت
                       </Text>
                     </View>
                   )}
