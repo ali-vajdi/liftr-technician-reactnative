@@ -195,11 +195,6 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
 
       const response = await submitChecklist(serviceId, payload);
 
-      // Log response for debugging
-      console.log('Checklist submission response:', JSON.stringify(response, null, 2));
-      console.log('Response success:', response?.success);
-      console.log('Response success type:', typeof response?.success);
-
       // Ensure we have a valid response
       if (!response) {
         throw new Error('پاسخ از سرور دریافت نشد');
@@ -208,17 +203,12 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       // Check if response is successful - the API returns { success: true, data: {...} }
       const isSuccess = response.success === true;
       
-      console.log('Is success check:', isSuccess);
-      
       if (isSuccess) {
         // Reset submitting state first
         setIsSubmitting(false);
         
-        console.log('Showing success alert...');
-        
         // Function to handle success - reset state and close page
         const handleSuccess = () => {
-          console.log('Alert button pressed, closing page...');
           // Reset all state
           setFlowState('detail');
           setCurrentElevatorIndex(0);
@@ -257,7 +247,6 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                 ],
                 { cancelable: false }
               );
-              console.log('Alert.alert called');
             } catch (error) {
               console.error('Error showing alert:', error);
               // Fallback: directly close the page if alert fails
@@ -268,7 +257,6 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       } else {
         setIsSubmitting(false);
         const errorMsg = (response as any)?.message || 'خطا در ثبت چک لیست';
-        console.log('Submission failed:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (err: any) {

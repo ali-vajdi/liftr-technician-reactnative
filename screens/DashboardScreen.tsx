@@ -60,19 +60,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     setLogoutConfirmVisible(false);
   };
 
-  const getHeaderTitle = () => {
-    if (selectedServiceId) {
-      return 'جزئیات سرویس';
-    }
-    switch (activePage) {
-      case 'reports':
-        return 'گزارش‌ها';
-      case 'settings':
-        return 'تنظیمات';
-      case 'home':
-      default:
-        return 'داشبورد لیفتر';
-    }
+  const getOrganizationName = () => {
+    return technician?.organization_name || technician?.organization?.name || 'لیفتر';
   };
 
   const handleBuildingPress = (serviceId: number) => {
@@ -113,7 +102,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top', 'left', 'right']}>
       <Header 
-        title={getHeaderTitle()} 
+        organizationName={getOrganizationName()} 
         onBackPress={handleBackFromDetail}
         showBack={!!selectedServiceId}
       />
