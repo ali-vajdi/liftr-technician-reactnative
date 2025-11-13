@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
@@ -29,6 +29,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const [technician, setTechnician] = useState(contextTechnician);
   const [loading, setLoading] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadProfile();
@@ -140,7 +141,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         borderTopWidth: 1,
         borderTopColor: '#F3F4F6',
         paddingTop: 12,
-        paddingBottom: 12,
+        paddingBottom: Math.max(insets.bottom, 12),
         paddingHorizontal: 16,
         flexDirection: 'row-reverse',
         justifyContent: 'space-around',
