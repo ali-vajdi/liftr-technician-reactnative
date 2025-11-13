@@ -14,23 +14,107 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   phoneNumber,
   onLogout,
 }) => {
+
+  const InfoRow: React.FC<{ label: string; value?: string; icon: any }> = ({ label, value = 'نامشخص', icon }) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row-reverse',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingVertical: 12,
+          gap: 12,
+        }}
+      >
+        {/* Right: Label and icon */}
+        <View style={{ flexDirection: 'row-reverse', alignItems: 'center', minWidth: 110 }}>
+          <View
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 8,
+              backgroundColor: '#F3F4F6',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 8,
+            }}
+          >
+            <Ionicons name={icon} size={16} color="#6B7280" />
+          </View>
+          <Text style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'Yekan', textAlign: 'right' }}>
+            {label}
+          </Text>
+        </View>
+        {/* Left: Value */}
+        <Text
+          style={{
+            color: '#1F2937',
+            fontSize: 15,
+            fontFamily: 'YekanBold',
+            textAlign: 'left',
+            flex: 1,
+          }}
+          numberOfLines={2}
+        >
+          {value}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <ScrollView 
       className="flex-1 bg-gray-50" 
       contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20, paddingTop: 20 }}
       showsVerticalScrollIndicator={false}
     >
-      {/* User Info Section */}
-      <View className="bg-white rounded-3xl w-full p-6 mb-4" style={{
+      {/* Profile Header */}
+      <View
+        className="bg-white rounded-3xl w-full p-6 mb-4"
+        style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
-      }}>
-        <Text className="text-gray-700 text-lg font-yekan-bold mb-4" style={{ textAlign: 'right' }}>
-          اطلاعات کاربری
-        </Text>
+        }}
+      >
+        <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+          <View
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              backgroundColor: '#EFF6FF',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 12,
+              borderWidth: 1,
+              borderColor: '#E5E7EB',
+            }}
+          >
+            <Ionicons name="person" size={28} color="#0077B6" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                color: '#1F2937',
+                fontSize: 18,
+                fontFamily: 'YekanBold',
+                textAlign: 'right',
+                marginBottom: 4,
+              }}
+              numberOfLines={1}
+            >
+              {(technician?.first_name || technician?.last_name)
+                ? `${technician?.first_name || ''} ${technician?.last_name || ''}`.trim()
+                : 'کاربر لیفتر'}
+            </Text>
+            <Text style={{ color: '#6B7280', fontSize: 13, fontFamily: 'Yekan', textAlign: 'right' }}>
+              {phoneNumber}
+            </Text>
+          </View>
+        </View>
 
         {/* Status Badge */}
         <View style={{ 
@@ -53,109 +137,32 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         </View>
 
         {/* User Info Items */}
-        <View style={{ gap: 12 }}>
+        <View style={{ gap: 4 }}>
           {(technician?.first_name || technician?.last_name) && (
-            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 }}>
-              <Text style={{ 
-                color: '#1F2937',
-                fontSize: 15,
-                fontFamily: 'YekanBold',
-                textAlign: 'right'
-              }}>
-                {technician.first_name} {technician.last_name}
-              </Text>
-              <Text style={{ 
-                color: '#9CA3AF',
-                fontSize: 12,
-                fontFamily: 'Yekan',
-                textAlign: 'left'
-              }}>
-                نام
-              </Text>
-            </View>
+            <InfoRow
+              label="نام"
+              value={`${technician?.first_name || ''} ${technician?.last_name || ''}`.trim()}
+              icon="person-outline"
+            />
           )}
-
-          <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
-            <Text style={{ 
-              color: '#1F2937',
-              fontSize: 15,
-              fontFamily: 'YekanBold',
-              textAlign: 'right'
-            }}>
-              {phoneNumber}
-            </Text>
-            <Text style={{ 
-              color: '#9CA3AF',
-              fontSize: 12,
-              fontFamily: 'Yekan',
-              textAlign: 'left'
-            }}>
-              شماره تماس
-            </Text>
-          </View>
-
+          <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
+          <InfoRow label="شماره تماس" value={phoneNumber} icon="call-outline" />
           {technician?.national_id && (
-            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
-              <Text style={{ 
-                color: '#1F2937',
-                fontSize: 15,
-                fontFamily: 'YekanBold',
-                textAlign: 'right'
-              }}>
-                {technician.national_id}
-              </Text>
-              <Text style={{ 
-                color: '#9CA3AF',
-                fontSize: 12,
-                fontFamily: 'Yekan',
-                textAlign: 'left'
-              }}>
-                کد ملی
-              </Text>
-            </View>
+            <>
+              <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
+              <InfoRow label="کد ملی" value={technician.national_id} icon="id-card-outline" />
+            </>
           )}
-
           {(technician?.organization_name || technician?.organization) && (
-            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
-              <Text style={{ 
-                color: '#1F2937',
-                fontSize: 15,
-                fontFamily: 'YekanBold',
-                textAlign: 'right',
-                flex: 1
-              }}>
-                {technician.organization_name || technician.organization?.name || 'نامشخص'}
-              </Text>
-              <Text style={{ 
-                color: '#9CA3AF',
-                fontSize: 12,
-                fontFamily: 'Yekan',
-                textAlign: 'left',
-                marginLeft: 8
-              }}>
-                سازمان
-              </Text>
-            </View>
+            <>
+              <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
+              <InfoRow
+                label="سازمان"
+                value={technician?.organization_name || technician?.organization?.name || 'نامشخص'}
+                icon="business-outline"
+              />
+            </>
           )}
-
-          <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
-            <Text style={{ 
-              color: '#1F2937',
-              fontSize: 15,
-              fontFamily: 'YekanBold',
-              textAlign: 'right'
-            }}>
-              #{technician?.id || '---'}
-            </Text>
-            <Text style={{ 
-              color: '#9CA3AF',
-              fontSize: 12,
-              fontFamily: 'Yekan',
-              textAlign: 'left'
-            }}>
-              شناسه
-            </Text>
-          </View>
         </View>
       </View>
 
