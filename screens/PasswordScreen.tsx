@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { formatPersianPhoneNumber } from '../utils/numberUtils';
 
 interface PasswordScreenProps {
   phoneNumber: string;
@@ -63,7 +64,7 @@ export const PasswordScreen: React.FC<PasswordScreenProps> = ({
                 رمز عبور خود را وارد کنید
               </Text>
               <Text className="text-honolulu-blue text-lg font-yekan-bold text-center">
-                {phoneNumber}
+                {formatPersianPhoneNumber(phoneNumber)}
               </Text>
             </View>
 

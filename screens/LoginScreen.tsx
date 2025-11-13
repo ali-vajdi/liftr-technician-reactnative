@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { formatPersianPhoneNumber } from '../utils/numberUtils';
 
 interface LoginScreenProps {
   onLogin: (phoneNumber: string) => void;
@@ -10,9 +11,24 @@ interface LoginScreenProps {
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  // Convert Persian digits to English for internal storage
+  const persianToEnglish = (text: string): string => {
+    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const index = persianDigits.indexOf(char);
+      result += index !== -1 ? englishDigits[index] : char;
+    }
+    return result;
+  };
+
   const formatPhoneNumber = (text: string) => {
+    // Convert Persian to English first
+    const englishText = persianToEnglish(text);
     // Remove all non-numeric characters
-    const cleaned = text.replace(/\D/g, '');
+    const cleaned = englishText.replace(/\D/g, '');
     
     // Format as Iranian phone number (09xxxxxxxxx)
     if (cleaned.length <= 11) {
@@ -96,9 +112,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => 
                 <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-4 border border-gray-100">
                   <Text className="text-gray-500 text-base font-yekan ml-3">+98</Text>
                   <TextInput
-                    value={phoneNumber}
+                    value={formatPersianPhoneNumber(phoneNumber)}
                     onChangeText={handlePhoneChange}
-                    placeholder="912 345 6789"
+                    placeholder="۹۱۲ ۳۴۵ ۶۷۸۹"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="phone-pad"
                     maxLength={11}

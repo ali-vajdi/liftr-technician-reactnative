@@ -6,6 +6,7 @@ import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '
 import type { ServiceDetail, ChecklistItem, LastServiceDetail } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage, type SignatureData } from './SignaturePage';
+import { toPersianDigits } from '../utils/numberUtils';
 
 interface SavedDescription {
   checklistId: number;
@@ -45,7 +46,9 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   const [showLastServiceModal, setShowLastServiceModal] = useState(false);
 
   useEffect(() => {
-    loadServiceDetail();
+    if (serviceId) {
+      loadServiceDetail();
+    }
   }, [serviceId]);
 
   const loadServiceDetail = async () => {
@@ -61,14 +64,20 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         }
         // Store checklists if available
         if (response.checklists && Array.isArray(response.checklists)) {
-          // Sort by order to ensure correct sequence
-          const sortedChecklists = [...response.checklists].sort((a, b) => a.order - b.order);
+          // Remove duplicates based on ID, then sort by order
+          const uniqueChecklists = response.checklists.filter((item, index, self) =>
+            index === self.findIndex((t) => t.id === item.id)
+          );
+          const sortedChecklists = [...uniqueChecklists].sort((a, b) => a.order - b.order);
           setChecklists(sortedChecklists);
         }
         // Store description checklists if available
         if (response.description_checklists && Array.isArray(response.description_checklists)) {
-          // Sort by order to ensure correct sequence
-          const sortedDescriptionChecklists = [...response.description_checklists].sort((a, b) => a.order - b.order);
+          // Remove duplicates based on ID, then sort by order
+          const uniqueDescriptionChecklists = response.description_checklists.filter((item, index, self) =>
+            index === self.findIndex((t) => t.id === item.id)
+          );
+          const sortedDescriptionChecklists = [...uniqueDescriptionChecklists].sort((a, b) => a.order - b.order);
           setDescriptionChecklists(sortedDescriptionChecklists);
         }
       }
@@ -413,7 +422,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </TouchableOpacity>
           <Text style={{
             fontSize: 18,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: '#1F2937',
             textAlign: 'right',
             flex: 1,
@@ -467,7 +476,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </TouchableOpacity>
           <Text style={{
             fontSize: 18,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: '#1F2937',
             textAlign: 'right',
             flex: 1,
@@ -516,7 +525,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </TouchableOpacity>
           <Text style={{
             fontSize: 18,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: '#1F2937',
             textAlign: 'right',
             flex: 1,
@@ -563,7 +572,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           <View style={{ flex: 1, marginRight: 12 }}>
             <Text style={{
               fontSize: 20,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
               marginBottom: 6,
@@ -577,11 +586,11 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 6 }} />
               <Text style={{
                 fontSize: 13,
-                fontFamily: 'Yekan',
+                fontFamily: 'YekanBakhFaNum-Regular',
                 color: '#6B7280',
                 textAlign: 'right',
               }}>
-                {serviceDetail.service_date_text}
+                {toPersianDigits(serviceDetail.service_date_text)}
               </Text>
             </View>
           </View>
@@ -593,7 +602,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           }}>
             <Text style={{
               fontSize: 12,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#0077B6',
             }}>
               {serviceDetail.status_text}
@@ -630,7 +639,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: 15,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
               marginBottom: 4,
@@ -639,7 +648,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             </Text>
             <Text style={{
               fontSize: 13,
-              fontFamily: 'Yekan',
+              fontFamily: 'YekanBakhFaNum-Regular',
               color: '#6B7280',
               textAlign: 'right',
             }}>
@@ -668,7 +677,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           <View style={{ flex: 1, marginRight: 8 }}>
             <Text style={{
               fontSize: 13,
-              fontFamily: 'Yekan',
+              fontFamily: 'YekanBakhFaNum-Regular',
               color: '#9CA3AF',
               textAlign: 'right',
               marginBottom: 4,
@@ -677,7 +686,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             </Text>
             <Text style={{
               fontSize: 16,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
             }}>
@@ -701,7 +710,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             <Ionicons name="call" size={18} color="#10B981" style={{ marginLeft: 6 }} />
             <Text style={{
               fontSize: 14,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#065F46',
               textAlign: 'right',
             }}>
@@ -715,7 +724,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       <View style={{ marginBottom: 12 }}>
         <Text style={{
           fontSize: 16,
-          fontFamily: 'YekanBold',
+          fontFamily: 'YekanBakhFaNum-Bold',
           color: '#1F2937',
           textAlign: 'right',
           marginBottom: 10,
@@ -743,7 +752,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               }}>
                 <Text style={{
                   fontSize: 16,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#1F2937',
                   textAlign: 'right',
                 }}>
@@ -757,7 +766,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                 }}>
                   <Text style={{
                     fontSize: 11,
-                    fontFamily: 'YekanBold',
+                    fontFamily: 'YekanBakhFaNum-Bold',
                     color: elevator.status ? '#065F46' : '#991B1B',
                   }}>
                     {elevator.status ? 'فعال' : 'غیرفعال'}
@@ -775,7 +784,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                 <View style={{ flex: 1 }}>
                   <Text style={{
                     fontSize: 11,
-                    fontFamily: 'Yekan',
+                    fontFamily: 'YekanBakhFaNum-Regular',
                     color: '#9CA3AF',
                     textAlign: 'right',
                     marginBottom: 4,
@@ -784,17 +793,17 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    fontFamily: 'YekanBold',
+                    fontFamily: 'YekanBakhFaNum-Bold',
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {elevator.stops_count}
+                    {toPersianDigits(elevator.stops_count)}
                   </Text>
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{
                     fontSize: 11,
-                    fontFamily: 'Yekan',
+                    fontFamily: 'YekanBakhFaNum-Regular',
                     color: '#9CA3AF',
                     textAlign: 'right',
                     marginBottom: 4,
@@ -803,11 +812,11 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    fontFamily: 'YekanBold',
+                    fontFamily: 'YekanBakhFaNum-Bold',
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {elevator.capacity} نفر
+                    {toPersianDigits(elevator.capacity)} نفر
                   </Text>
                 </View>
               </View>
@@ -840,7 +849,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             </View>
             <Text style={{
               fontSize: 16,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
             }}>
@@ -849,7 +858,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </View>
           <Text style={{
             fontSize: 14,
-            fontFamily: 'Yekan',
+            fontFamily: 'YekanBakhFaNum-Regular',
             color: '#4B5563',
             textAlign: 'right',
             lineHeight: 24,
@@ -883,7 +892,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             </View>
             <Text style={{
               fontSize: 16,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
             }}>
@@ -892,7 +901,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </View>
           <Text style={{
             fontSize: 14,
-            fontFamily: 'Yekan',
+            fontFamily: 'YekanBakhFaNum-Regular',
             color: '#4B5563',
             textAlign: 'right',
             lineHeight: 24,
@@ -930,7 +939,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             </View>
             <Text style={{
               fontSize: 16,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
               flex: 1,
@@ -945,7 +954,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             }}>
               <Text style={{
                 fontSize: 11,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: lastService.status === 'completed' ? '#10B981' : '#6B7280',
               }}>
                 {lastService.status_text}
@@ -957,16 +966,16 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             {/* Service Date */}
             <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
               <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
-              <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
-                {lastService.service_date_text}
+              <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
+                {toPersianDigits(lastService.service_date_text)}
               </Text>
             </View>
 
             {/* Assigned At */}
             <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
               <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
-              <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
-                اختصاص داده شده: {lastService.assigned_at_jalali}
+              <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
+                اختصاص داده شده: {toPersianDigits(lastService.assigned_at_jalali)}
               </Text>
             </View>
 
@@ -974,7 +983,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             {lastService.completed_at_jalali && (
               <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                 <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 8 }} />
-                <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#10B981', textAlign: 'right' }}>
+                <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#10B981', textAlign: 'right' }}>
                   تکمیل شده: {lastService.completed_at_jalali}
                 </Text>
               </View>
@@ -990,7 +999,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               }}>
                 <Text style={{
                   fontSize: 12,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#6B7280',
                   textAlign: 'right',
                   marginBottom: 8,
@@ -1011,7 +1020,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                         <View style={{ flex: 1, marginRight: 8 }}>
                           <Text style={{
                             fontSize: 13,
-                            fontFamily: 'YekanBold',
+                            fontFamily: 'YekanBakhFaNum-Bold',
                             color: '#1F2937',
                             textAlign: 'right',
                           }}>
@@ -1020,7 +1029,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                           {elevatorChecklist.descriptions && elevatorChecklist.descriptions.length > 0 && (
                             <Text style={{
                               fontSize: 11,
-                              fontFamily: 'Yekan',
+                              fontFamily: 'YekanBakhFaNum-Regular',
                               color: '#6B7280',
                               textAlign: 'right',
                               marginTop: 4,
@@ -1050,7 +1059,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           </View>
           <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
             <Ionicons name="chevron-back" size={16} color="#6B7280" style={{ marginRight: 4 }} />
-            <Text style={{ fontSize: 12, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+            <Text style={{ fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
               مشاهده جزئیات
             </Text>
           </View>
@@ -1099,7 +1108,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               </TouchableOpacity>
               <Text style={{
                 fontSize: 18,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: '#1F2937',
                 textAlign: 'right',
                 flex: 1,
@@ -1139,7 +1148,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                       </View>
                       <Text style={{
                         fontSize: 16,
-                        fontFamily: 'YekanBold',
+                        fontFamily: 'YekanBakhFaNum-Bold',
                         color: '#1F2937',
                         textAlign: 'right',
                         flex: 1,
@@ -1154,7 +1163,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                       }}>
                         <Text style={{
                           fontSize: 11,
-                          fontFamily: 'YekanBold',
+                          fontFamily: 'YekanBakhFaNum-Bold',
                           color: lastService.status === 'completed' ? '#10B981' : '#6B7280',
                         }}>
                           {lastService.status_text}
@@ -1165,20 +1174,20 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                     <View style={{ gap: 12 }}>
                       <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                         <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
-                        <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
-                          {lastService.service_date_text}
+                        <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
+                          {toPersianDigits(lastService.service_date_text)}
                         </Text>
                       </View>
                       <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                         <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
-                        <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
-                          اختصاص داده شده: {lastService.assigned_at_jalali}
+                        <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
+                          اختصاص داده شده: {toPersianDigits(lastService.assigned_at_jalali)}
                         </Text>
                       </View>
                       {lastService.completed_at_jalali && (
                         <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                           <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 8 }} />
-                          <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#10B981', textAlign: 'right' }}>
+                          <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#10B981', textAlign: 'right' }}>
                             تکمیل شده: {lastService.completed_at_jalali}
                           </Text>
                         </View>
@@ -1210,7 +1219,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                         </View>
                         <Text style={{
                           fontSize: 16,
-                          fontFamily: 'YekanBold',
+                          fontFamily: 'YekanBakhFaNum-Bold',
                           color: '#1F2937',
                           textAlign: 'right',
                           flex: 1,
@@ -1240,7 +1249,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                             }}>
                               <Text style={{
                                 fontSize: 15,
-                                fontFamily: 'YekanBold',
+                                fontFamily: 'YekanBakhFaNum-Bold',
                                 color: '#1F2937',
                                 textAlign: 'right',
                               }}>
@@ -1265,7 +1274,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                 </View>
                                 <Text style={{
                                   fontSize: 12,
-                                  fontFamily: 'Yekan',
+                                  fontFamily: 'YekanBakhFaNum-Regular',
                                   color: elevatorChecklist.verified ? '#10B981' : '#EF4444',
                                 }}>
                                   {elevatorChecklist.verified ? 'تایید شده' : 'تایید نشده'}
@@ -1278,7 +1287,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                               <View style={{ gap: 8 }}>
                                 <Text style={{
                                   fontSize: 13,
-                                  fontFamily: 'YekanBold',
+                                  fontFamily: 'YekanBakhFaNum-Bold',
                                   color: '#6B7280',
                                   textAlign: 'right',
                                   marginBottom: 8,
@@ -1295,7 +1304,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                   }}>
                                     <Text style={{
                                       fontSize: 13,
-                                      fontFamily: 'YekanBold',
+                                      fontFamily: 'YekanBakhFaNum-Bold',
                                       color: '#1F2937',
                                       textAlign: 'right',
                                       marginBottom: 4,
@@ -1305,7 +1314,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                     {desc.description && (
                                       <Text style={{
                                         fontSize: 12,
-                                        fontFamily: 'Yekan',
+                                        fontFamily: 'YekanBakhFaNum-Regular',
                                         color: '#6B7280',
                                         textAlign: 'right',
                                         marginTop: 4,
@@ -1347,7 +1356,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                         </View>
                         <Text style={{
                           fontSize: 16,
-                          fontFamily: 'YekanBold',
+                          fontFamily: 'YekanBakhFaNum-Bold',
                           color: '#1F2937',
                           textAlign: 'right',
                           flex: 1,
@@ -1368,7 +1377,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                           }}>
                             <Text style={{
                               fontSize: 13,
-                              fontFamily: 'YekanBold',
+                              fontFamily: 'YekanBakhFaNum-Bold',
                               color: '#1F2937',
                               textAlign: 'right',
                               marginBottom: 8,
@@ -1377,7 +1386,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                             </Text>
                             <Text style={{
                               fontSize: 12,
-                              fontFamily: 'Yekan',
+                              fontFamily: 'YekanBakhFaNum-Regular',
                               color: '#6B7280',
                               textAlign: 'right',
                               marginBottom: 12,
@@ -1412,7 +1421,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                           }}>
                             <Text style={{
                               fontSize: 13,
-                              fontFamily: 'YekanBold',
+                              fontFamily: 'YekanBakhFaNum-Bold',
                               color: '#1F2937',
                               textAlign: 'right',
                               marginBottom: 8,
@@ -1421,7 +1430,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                             </Text>
                             <Text style={{
                               fontSize: 12,
-                              fontFamily: 'Yekan',
+                              fontFamily: 'YekanBakhFaNum-Regular',
                               color: '#6B7280',
                               textAlign: 'right',
                               marginBottom: 12,
@@ -1475,7 +1484,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         <Ionicons name="checkmark-circle-outline" size={20} color="white" style={{ marginLeft: 8 }} />
         <Text style={{
           fontSize: 15,
-          fontFamily: 'YekanBold',
+          fontFamily: 'YekanBakhFaNum-Bold',
           color: 'white',
         }}>
           ثبت چک لیست

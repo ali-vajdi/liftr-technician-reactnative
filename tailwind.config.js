@@ -1,3 +1,5 @@
+const { platformSelect } = require('nativewind/theme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./App.{js,ts,tsx}', './components/**/*.{js,ts,tsx}', './screens/**/*.{js,ts,tsx}'],
@@ -16,8 +18,46 @@ module.exports = {
         'glass-cyan': 'rgba(0, 180, 216, 0.15)',
       },
       fontFamily: {
-        'yekan': ['Yekan', 'system-ui', 'sans-serif'],
-        'yekan-bold': ['YekanBold', 'system-ui', 'sans-serif'],
+        'yekan': platformSelect({
+          ios: 'YekanBakhFaNum-Regular',
+          android: 'YekanBakhFaNum-Regular',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-bold': platformSelect({
+          ios: 'YekanBakhFaNum-Bold',
+          android: 'YekanBakhFaNum-Bold',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-thin': platformSelect({
+          ios: 'YekanBakhFaNum-Thin',
+          android: 'YekanBakhFaNum-Thin',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-light': platformSelect({
+          ios: 'YekanBakhFaNum-Light',
+          android: 'YekanBakhFaNum-Light',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-semibold': platformSelect({
+          ios: 'YekanBakhFaNum-SemiBold',
+          android: 'YekanBakhFaNum-SemiBold',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-extrabold': platformSelect({
+          ios: 'YekanBakhFaNum-ExtraBold',
+          android: 'YekanBakhFaNum-ExtraBold',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-black': platformSelect({
+          ios: 'YekanBakhFaNum-Black',
+          android: 'YekanBakhFaNum-Black',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
+        'yekan-extablack': platformSelect({
+          ios: 'YekanBakhFaNum-ExtraBlack',
+          android: 'YekanBakhFaNum-ExtraBlack',
+          default: 'YekanBakhFaNum, system-ui, sans-serif',
+        }),
       },
       backdropBlur: {
         'xs': '2px',

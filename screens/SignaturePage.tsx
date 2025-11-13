@@ -111,7 +111,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
       {/* Title */}
       <Text style={{
         fontSize: 18,
-        fontFamily: 'YekanBold',
+        fontFamily: 'YekanBakhFaNum-Bold',
         color: '#1F2937',
         textAlign: 'right',
         marginBottom: 16,
@@ -130,7 +130,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
       }}>
         <Text style={{
           fontSize: 13,
-          fontFamily: 'Yekan',
+          fontFamily: 'YekanBakhFaNum-Regular',
           color: '#9CA3AF',
           textAlign: 'right',
           marginBottom: 8,
@@ -160,7 +160,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
             >
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: titlePrefix === 'آقا' ? '#0077B6' : '#6B7280',
               }}>
                 آقا
@@ -181,7 +181,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
             >
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: titlePrefix === 'خانم' ? '#0077B6' : '#6B7280',
               }}>
                 خانم
@@ -201,7 +201,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
             borderRadius: 12,
             padding: 14,
             fontSize: 15,
-            fontFamily: 'Yekan',
+            fontFamily: 'YekanBakhFaNum-Regular',
             color: '#1F2937',
             textAlign: 'right',
             borderWidth: 1,
@@ -261,7 +261,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
               <Ionicons name="arrow-undo" size={18} color="#6B7280" style={{ marginLeft: 6 }} />
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: '#6B7280',
               }}>
                 امضای مجدد
@@ -288,7 +288,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
               <Ionicons name="trash-outline" size={18} color="#6B7280" style={{ marginLeft: 6 }} />
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: '#6B7280',
               }}>
                 پاک کردن
@@ -312,7 +312,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
               <Ionicons name="checkmark-circle" size={18} color="white" style={{ marginLeft: 6 }} />
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: 'white',
               }}>
                 ثبت
@@ -345,7 +345,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
           <Ionicons name="arrow-forward" size={20} color="white" style={{ marginLeft: 8 }} />
           <Text style={{
             fontSize: 15,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: 'white',
           }}>
             مرحله بعد

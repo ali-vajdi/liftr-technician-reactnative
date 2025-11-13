@@ -101,7 +101,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
       }}>
         <Text style={{
           fontSize: 13,
-          fontFamily: 'Yekan',
+          fontFamily: 'YekanBakhFaNum-Regular',
           color: '#9CA3AF',
           textAlign: 'right',
           marginBottom: 6,
@@ -110,7 +110,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         </Text>
         <Text style={{
           fontSize: 18,
-          fontFamily: 'YekanBold',
+          fontFamily: 'YekanBakhFaNum-Bold',
           color: '#1F2937',
           textAlign: 'right',
           marginBottom: 16,
@@ -124,7 +124,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         }}>
           <Text style={{
             fontSize: 13,
-            fontFamily: 'Yekan',
+            fontFamily: 'YekanBakhFaNum-Regular',
             color: '#9CA3AF',
             textAlign: 'right',
             marginBottom: 6,
@@ -133,7 +133,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
           </Text>
           <Text style={{
             fontSize: 16,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: '#1F2937',
             textAlign: 'right',
           }}>
@@ -180,7 +180,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
               }}>
                 <Text style={{
                   fontSize: 13,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#0077B6',
                 }}>
                   {item.order}
@@ -189,7 +189,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
               <Text style={{
                 flex: 1,
                 fontSize: 15,
-                fontFamily: 'Yekan',
+                fontFamily: 'YekanBakhFaNum-Regular',
                 color: '#1F2937',
                 textAlign: 'right',
                 lineHeight: 24,
@@ -213,7 +213,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         }}>
           <Text style={{
             fontSize: 16,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: '#1F2937',
             textAlign: 'right',
             marginBottom: 12,
@@ -249,7 +249,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontSize: 14,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#0077B6',
                   textAlign: 'right',
                   marginBottom: desc.description ? 4 : 0,
@@ -259,7 +259,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                 {desc.description && (
                   <Text style={{
                     fontSize: 13,
-                    fontFamily: 'Yekan',
+                    fontFamily: 'YekanBakhFaNum-Regular',
                     color: '#6B7280',
                     textAlign: 'right',
                     lineHeight: 20,
@@ -292,7 +292,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         <Ionicons name="add-circle-outline" size={20} color="#0077B6" style={{ marginLeft: 8 }} />
         <Text style={{
           fontSize: 15,
-          fontFamily: 'YekanBold',
+          fontFamily: 'YekanBakhFaNum-Bold',
           color: '#0077B6',
         }}>
           افزودن توضیحات
@@ -331,7 +331,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         </View>
         <Text style={{
           fontSize: 15,
-          fontFamily: 'Yekan',
+          fontFamily: 'YekanBakhFaNum-Regular',
           color: '#1F2937',
           textAlign: 'right',
           flex: 1,
@@ -362,7 +362,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
           <Ionicons name="arrow-forward" size={20} color="white" style={{ marginLeft: 8 }} />
           <Text style={{
             fontSize: 15,
-            fontFamily: 'YekanBold',
+            fontFamily: 'YekanBakhFaNum-Bold',
             color: 'white',
           }}>
             مرحله بعد
@@ -408,7 +408,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
             }}>
               <Text style={{
                 fontSize: 18,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: '#1F2937',
                 textAlign: 'right',
               }}>
@@ -448,7 +448,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                   }}>
                     <Text style={{
                       fontSize: 13,
-                      fontFamily: 'YekanBold',
+                      fontFamily: 'YekanBakhFaNum-Bold',
                       color: '#0077B6',
                     }}>
                       {item.order}
@@ -457,7 +457,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                   <Text style={{
                     flex: 1,
                     fontSize: 15,
-                    fontFamily: 'Yekan',
+                    fontFamily: 'YekanBakhFaNum-Regular',
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
@@ -495,7 +495,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                 <Text style={{
                   flex: 1,
                   fontSize: 15,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#0077B6',
                   textAlign: 'right',
                 }}>
@@ -545,7 +545,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
             }}>
               <Text style={{
                 fontSize: 18,
-                fontFamily: 'YekanBold',
+                fontFamily: 'YekanBakhFaNum-Bold',
                 color: '#1F2937',
                 textAlign: 'right',
               }}>
@@ -561,7 +561,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
 
             <Text style={{
               fontSize: 14,
-              fontFamily: 'Yekan',
+              fontFamily: 'YekanBakhFaNum-Regular',
               color: '#6B7280',
               textAlign: 'right',
               marginBottom: 8,
@@ -581,7 +581,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                 borderRadius: 12,
                 padding: 14,
                 fontSize: 15,
-                fontFamily: 'Yekan',
+                fontFamily: 'YekanBakhFaNum-Regular',
                 color: '#1F2937',
                 textAlign: 'right',
                 textAlignVertical: 'top',
@@ -609,7 +609,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
               >
                 <Text style={{
                   fontSize: 15,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#6B7280',
                 }}>
                   انصراف
@@ -628,7 +628,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
               >
                 <Text style={{
                   fontSize: 15,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: 'white',
                 }}>
                   ثبت

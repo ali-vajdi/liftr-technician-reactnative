@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: 14,
-    fontFamily: 'Yekan',
+    fontFamily: 'YekanBakhFaNum-Regular',
     color: '#9CA3AF',
   },
   disabledOverlay: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     fontSize: 14,
-    fontFamily: 'YekanBold',
+    fontFamily: 'YekanBakhFaNum-Bold',
     color: '#10B981',
   },
 });

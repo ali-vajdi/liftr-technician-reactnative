@@ -41,7 +41,7 @@ export const LoadingModal: React.FC<LoadingModalProps> = ({
           <Text style={{
             marginTop: 20,
             fontSize: 16,
-            fontFamily: 'Yekan',
+            fontFamily: 'YekanBakhFaNum-Regular',
             color: '#4B5563',
             textAlign: 'center'
           }}>

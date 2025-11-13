@@ -46,6 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ organizationName, onBackPress, s
           style={{ 
             textAlign: 'right',
             fontSize: 18,
+            fontFamily: 'YekanBakhFaNum-Regular',
           }}
           numberOfLines={1}
           ellipsizeMode="tail"

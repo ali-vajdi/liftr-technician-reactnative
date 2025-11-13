@@ -316,7 +316,7 @@ function AppContent() {
                 
                 <Text style={{ 
                   fontSize: 22, 
-                  fontFamily: 'YekanBold', 
+                  fontFamily: 'YekanBakhFaNum-Bold', 
                   color: 'white',
                   textAlign: 'center',
                   marginBottom: 8
@@ -329,7 +329,7 @@ function AppContent() {
               <View style={{ padding: 24 }}>
                 <Text style={{ 
                   fontSize: 16, 
-                  fontFamily: 'Yekan', 
+                  fontFamily: 'YekanBakhFaNum-Regular', 
                   color: '#4B5563', 
                   textAlign: 'center',
                   lineHeight: 26,
@@ -357,7 +357,7 @@ function AppContent() {
                   <Text style={{ 
                     color: 'white', 
                     fontSize: 17, 
-                    fontFamily: 'YekanBold',
+                    fontFamily: 'YekanBakhFaNum-Bold',
                     letterSpacing: 0.5
                   }}>
                     متوجه شدم

@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAssignedBuildings } from '../services/buildingService';
 import type { AssignedBuilding } from '../types';
+import { toPersianDigits } from '../utils/numberUtils';
 
 interface HomePageProps {
   onBuildingPress?: (serviceId: number) => void;
@@ -91,7 +92,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
       <View style={{ marginBottom: 20 }}>
         <Text style={{
           fontSize: 22,
-          fontFamily: 'YekanBold',
+          fontFamily: 'YekanBakhFaNum-Bold',
           color: '#1F2937',
           textAlign: 'right',
         }}>
@@ -121,7 +122,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
             {/* Building Name */}
             <Text style={{
               fontSize: 17,
-              fontFamily: 'YekanBold',
+              fontFamily: 'YekanBakhFaNum-Bold',
               color: '#1F2937',
               textAlign: 'right',
               marginBottom: 8,
@@ -139,7 +140,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
               <Text style={{
                 flex: 1,
                 fontSize: 14,
-                fontFamily: 'Yekan',
+                fontFamily: 'YekanBakhFaNum-Regular',
                 color: '#6B7280',
                 textAlign: 'right',
               }}>
@@ -158,11 +159,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
             }}>
               <Text style={{
                 fontSize: 12,
-                fontFamily: 'Yekan',
+                fontFamily: 'YekanBakhFaNum-Regular',
                 color: '#9CA3AF',
                 textAlign: 'right',
               }}>
-                {building.assigned_at_jalali}
+                {toPersianDigits(building.assigned_at_jalali)}
               </Text>
               <View style={{
                 flexDirection: 'row-reverse',
@@ -171,10 +172,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                 <Ionicons name="arrow-up-outline" size={16} color="#0077B6" style={{ marginLeft: 4 }} />
                 <Text style={{
                   fontSize: 13,
-                  fontFamily: 'YekanBold',
+                  fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#0077B6',
                 }}>
-                  {building.elevators_count} آسانسور
+                  {toPersianDigits(building.elevators_count)} آسانسور
                 </Text>
               </View>
             </View>
