@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
-    "version": "1.0.0",
+    "name": "لیفتر - نسخه تکنیسین",
+    "slug": "liftir-technician-app",
+    "version": "1.0.1",
     "web": {
-      "favicon": "./assets/favicon.png"
+      "name": "لیفتر - نسخه تکنیسین",
+      "shortName": "لیفتر",
+      "favicon": "./assets/icon.jpg",
+      "icon": "./assets/icon.jpg"
     },
     "experiments": {
       "tsconfigPaths": true
     },
     "plugins": [],
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.jpg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -26,10 +29,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.nimarastgou.myexpoapp"
+      "package": "com.liftrir.technicianapp"
     },
     "extra": {
       "eas": {
