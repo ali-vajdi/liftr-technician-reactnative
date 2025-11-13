@@ -140,7 +140,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         <View style={{ gap: 4 }}>
           {(technician?.first_name || technician?.last_name) && (
             <InfoRow
-              label="نام"
+              label="نام و نام خانوادگی"
               value={`${technician?.first_name || ''} ${technician?.last_name || ''}`.trim()}
               icon="person-outline"
             />
