@@ -63,6 +63,8 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
       className="flex-1 bg-gray-50" 
       contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
     >
       {/* Building Info */}
       <View style={{
@@ -128,6 +130,8 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
         <ScrollView 
           style={{ maxHeight: 400 }}
           showsVerticalScrollIndicator={true}
+          nestedScrollEnabled
+          keyboardShouldPersistTaps="handled"
         >
           {checklistItems.map((item, index) => (
             <View

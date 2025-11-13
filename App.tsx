@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, BackHandler, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
@@ -158,6 +158,29 @@ function AppContent() {
         break;
     }
   };
+
+  // Handle Android hardware back button
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Handle back navigation for login flow screens
+      if (currentScreen === 'login' || currentScreen === 'password' || currentScreen === 'verification') {
+        handleBack();
+        return true; // Prevent default back behavior
+      }
+      // On dashboard, prevent exiting app (stay on dashboard)
+      if (currentScreen === 'dashboard') {
+        return true; // Prevent default back behavior (exit app)
+      }
+      // On welcome screen, allow default behavior (exit app)
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [currentScreen, handleBack]);
 
   const handleNavigate = (page: 'reports' | 'home' | 'settings') => {
     setActivePage(page);

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform, BackHandler } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '../services/buildingService';
@@ -272,7 +272,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
     }
   };
 
-  const handleFlowBack = () => {
+  const handleFlowBack = useCallback(() => {
     switch (flowState) {
       case 'checklist':
         if (currentElevatorIndex > 0) {
@@ -296,7 +296,27 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       default:
         onBack();
     }
-  };
+  }, [flowState, currentElevatorIndex, serviceDetail, onBack]);
+
+  // Handle Android hardware back button for flow navigation
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // If we're in a flow state (not detail), handle back navigation
+      if (flowState !== 'detail') {
+        handleFlowBack();
+        return true; // Prevent default back behavior
+      }
+      // On detail view, go back to dashboard
+      onBack();
+      return true; // Prevent default back behavior (exit app)
+    });
+
+    return () => backHandler.remove();
+  }, [flowState, handleFlowBack, onBack]);
 
   const getCurrentElevator = () => {
     const elevators = serviceDetail?.building?.elevators || [];
