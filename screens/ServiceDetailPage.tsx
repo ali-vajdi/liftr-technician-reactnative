@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
-import { getServiceDetail } from '../services/buildingService';
+import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '../services/buildingService';
 import type { ServiceDetail, ChecklistItem } from '../types';
 import { ChecklistPage } from './ChecklistPage';
-import { SignaturePage } from './SignaturePage';
+import { SignaturePage, type SignatureData } from './SignaturePage';
 
 interface SavedDescription {
   checklistId: number;
@@ -37,6 +37,10 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   const [elevatorDescriptions, setElevatorDescriptions] = useState<Record<number, SavedDescription[]>>({});
   // Store verification state per elevator ID
   const [elevatorVerified, setElevatorVerified] = useState<Record<number, boolean>>({});
+  // Store signature data
+  const [managerSignature, setManagerSignature] = useState<SignatureData | null>(null);
+  const [technicianSignature, setTechnicianSignature] = useState<SignatureData | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     loadServiceDetail();
@@ -108,14 +112,164 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
     }
   };
 
-  const handleManagerSignatureNext = () => {
+  const handleManagerSignatureNext = (signatureData?: SignatureData) => {
+    if (!signatureData) {
+      Alert.alert('خطا', 'لطفاً امضای نماینده/مدیر ساختمان را تکمیل کنید');
+      return;
+    }
+
+    if (!signatureData.name || !signatureData.name.trim()) {
+      Alert.alert('خطا', 'لطفاً نام نماینده/مدیر ساختمان را وارد کنید');
+      return;
+    }
+
+    setManagerSignature(signatureData);
     setFlowState('technician-signature');
   };
 
-  const handleTechnicianSignatureNext = () => {
-    // All signatures completed, go back to detail
-    setFlowState('detail');
-    setCurrentElevatorIndex(0);
+  const handleTechnicianSignatureNext = async (signatureData?: SignatureData) => {
+    if (!signatureData) {
+      Alert.alert('خطا', 'لطفاً امضای سرویس کار را تکمیل کنید');
+      return;
+    }
+
+    setTechnicianSignature(signatureData);
+
+    // Submit checklist when technician signature is completed
+    // Use the signatureData directly and managerSignature from state
+    if (managerSignature) {
+      await handleSubmitChecklist(managerSignature, signatureData);
+    } else {
+      Alert.alert('خطا', 'امضای نماینده/مدیر ساختمان یافت نشد. لطفاً دوباره تلاش کنید.');
+      setFlowState('manager-signature');
+    }
+  };
+
+  const handleSubmitChecklist = async (managerSig: SignatureData, technicianSig: SignatureData) => {
+    if (!serviceDetail?.building?.elevators) {
+      return;
+    }
+
+    // Validate that both signatures have names
+    if (!managerSig.name || !managerSig.name.trim()) {
+      Alert.alert('خطا', 'نام نماینده/مدیر ساختمان الزامی است');
+      return;
+    }
+
+    if (!technicianSig.name || !technicianSig.name.trim()) {
+      Alert.alert('خطا', 'نام سرویس کار الزامی است');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Build elevators payload
+      const elevators = serviceDetail.building.elevators.map((elevator) => ({
+        elevator_id: elevator.id,
+        verified: elevatorVerified[elevator.id] || false,
+        descriptions: (elevatorDescriptions[elevator.id] || []).map((desc) => ({
+          checklist_id: desc.checklistId,
+          title: desc.title,
+          description: desc.description,
+        })),
+      }));
+
+      const payload: SubmitChecklistPayload = {
+        elevators,
+        manager_signature: {
+          name: managerSig.name.trim(),
+          signature: managerSig.signature,
+        },
+        technician_signature: {
+          name: technicianSig.name.trim(),
+          signature: technicianSig.signature,
+        },
+      };
+
+      const response = await submitChecklist(serviceId, payload);
+
+      // Log response for debugging
+      console.log('Checklist submission response:', JSON.stringify(response, null, 2));
+      console.log('Response success:', response?.success);
+      console.log('Response success type:', typeof response?.success);
+
+      // Ensure we have a valid response
+      if (!response) {
+        throw new Error('پاسخ از سرور دریافت نشد');
+      }
+
+      // Check if response is successful - the API returns { success: true, data: {...} }
+      const isSuccess = response.success === true;
+      
+      console.log('Is success check:', isSuccess);
+      
+      if (isSuccess) {
+        // Reset submitting state first
+        setIsSubmitting(false);
+        
+        console.log('Showing success alert...');
+        
+        // Function to handle success - reset state and close page
+        const handleSuccess = () => {
+          console.log('Alert button pressed, closing page...');
+          // Reset all state
+          setFlowState('detail');
+          setCurrentElevatorIndex(0);
+          setManagerSignature(null);
+          setTechnicianSignature(null);
+          setElevatorDescriptions({});
+          setElevatorVerified({});
+          // Close the service detail page and go back
+          onBack();
+        };
+
+        // On web platform, use browser confirm as Alert.alert may not work properly
+        if (Platform.OS === 'web') {
+          setTimeout(() => {
+            const confirmed = window.confirm('چک لیست با موفقیت ثبت شد و سرویس تکمیل گردید');
+            if (confirmed) {
+              handleSuccess();
+            } else {
+              // Even if user cancels, we should still close (successful submission)
+              handleSuccess();
+            }
+          }, 100);
+        } else {
+          // Use a small delay to ensure React Native is ready to show the alert
+          // This is especially important after async operations
+          setTimeout(() => {
+            try {
+              Alert.alert(
+                'تکمیل شد',
+                'چک لیست با موفقیت ثبت شد و سرویس تکمیل گردید',
+                [
+                  {
+                    text: 'باشه',
+                    onPress: handleSuccess,
+                  },
+                ],
+                { cancelable: false }
+              );
+              console.log('Alert.alert called');
+            } catch (error) {
+              console.error('Error showing alert:', error);
+              // Fallback: directly close the page if alert fails
+              handleSuccess();
+            }
+          }, 300);
+        }
+      } else {
+        setIsSubmitting(false);
+        const errorMsg = (response as any)?.message || 'خطا در ثبت چک لیست';
+        console.log('Submission failed:', errorMsg);
+        throw new Error(errorMsg);
+      }
+    } catch (err: any) {
+      Alert.alert('خطا', err.message || 'خطا در ثبت چک لیست. لطفاً دوباره تلاش کنید.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFlowBack = () => {

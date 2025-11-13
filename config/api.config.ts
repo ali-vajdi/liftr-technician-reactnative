@@ -27,5 +27,6 @@ export const API_ENDPOINTS = {
   },
   ASSIGNED_BUILDINGS: '/technician/services/assigned-buildings',
   SERVICE_DETAIL: (serviceId: number) => `/technician/services/${serviceId}`,
+  SUBMIT_CHECKLIST: (serviceId: number) => `/technician/services/${serviceId}/submit-checklist`,
 };
 

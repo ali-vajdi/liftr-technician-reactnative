@@ -31,6 +31,50 @@ export const getServiceDetail = async (serviceId: number): Promise<ServiceDetail
 };
 
 /**
+ * Submit checklist data for a service
+ */
+export interface SubmitChecklistPayload {
+  elevators: Array<{
+    elevator_id: number;
+    verified: boolean;
+    descriptions: Array<{
+      checklist_id: number;
+      title: string;
+      description: string;
+    }>;
+  }>;
+  manager_signature: {
+    name: string;
+    signature: string;
+  };
+  technician_signature: {
+    name: string;
+    signature: string;
+  };
+}
+
+export interface SubmitChecklistResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const submitChecklist = async (
+  serviceId: number,
+  payload: SubmitChecklistPayload
+): Promise<SubmitChecklistResponse> => {
+  try {
+    const response = await apiClient.post<SubmitChecklistResponse>(
+      API_ENDPOINTS.SUBMIT_CHECKLIST(serviceId),
+      payload
+    );
+    return response.data;
+  } catch (error: any) {
+    throw handleError(error);
+  }
+};
+
+/**
  * Handle API errors and extract meaningful error messages
  */
 const handleError = (error: any): Error => {

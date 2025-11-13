@@ -14,6 +14,7 @@ export interface SignaturePadRef {
   clearSignature: () => void;
   clearLastPath: () => void;
   hasSignature: () => boolean;
+  getSignatureData: () => { paths: string[]; width: number; height: number } | null;
 }
 
 export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(({ 
@@ -118,10 +119,20 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(({
 
   const hasSignature = () => paths.length > 0;
 
+  const getSignatureData = () => {
+    if (paths.length === 0) return null;
+    return {
+      paths: [...paths],
+      width: containerWidth,
+      height: containerHeight,
+    };
+  };
+
   useImperativeHandle(ref, () => ({
     clearSignature,
     clearLastPath,
     hasSignature,
+    getSignatureData,
   }));
 
   return (

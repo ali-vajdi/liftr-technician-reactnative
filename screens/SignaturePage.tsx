@@ -1,14 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SignaturePad, SignaturePadRef } from '../components/ui/SignaturePad';
+import { convertSignatureToBase64 } from '../utils/signatureUtils';
+
+export interface SignatureData {
+  name: string;
+  signature: string; // base64 encoded image or SVG string
+}
 
 interface SignaturePageProps {
   title: string;
   nameLabel: string;
   defaultName?: string;
   showGenderSelector?: boolean;
-  onNext: () => void;
+  onNext: (signatureData?: SignatureData) => void;
   onBack: () => void;
 }
 
@@ -48,6 +54,32 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
   const handleRegister = () => {
     if (hasSignature && signaturePadRef.current) {
       setIsSignatureDisabled(true);
+    }
+  };
+
+  const handleNext = () => {
+    if (isSignatureDisabled && signaturePadRef.current) {
+      const signatureData = signaturePadRef.current.getSignatureData();
+      if (signatureData) {
+        const trimmedName = name.trim();
+        if (!trimmedName) {
+          Alert.alert('خطا', 'لطفاً نام را وارد کنید');
+          return;
+        }
+        const signatureBase64 = convertSignatureToBase64(
+          signatureData.paths,
+          signatureData.width,
+          signatureData.height
+        );
+        onNext({
+          name: trimmedName,
+          signature: signatureBase64,
+        });
+      } else {
+        Alert.alert('خطا', 'لطفاً امضا را ثبت کنید');
+      }
+    } else {
+      onNext();
     }
   };
 
@@ -293,10 +325,11 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
       {/* Next Button - Only enabled after signature is registered */}
       {isSignatureDisabled && (
         <TouchableOpacity
-          onPress={onNext}
+          onPress={handleNext}
           activeOpacity={0.8}
+          disabled={!name.trim()}
           style={{
-            backgroundColor: '#0077B6',
+            backgroundColor: name.trim() ? '#0077B6' : '#D1D5DB',
             borderRadius: 16,
             padding: 16,
             alignItems: 'center',
