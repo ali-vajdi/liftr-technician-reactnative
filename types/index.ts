@@ -134,6 +134,8 @@ export interface ServiceDetail {
   service_year: number;
   status: string;
   notes: string | null;
+  organization_note: string | null;
+  user_note: string | null;
   assigned_at: string;
   completed_at: string | null;
   created_at: string;
@@ -151,9 +153,15 @@ export interface ChecklistItem {
   order: number;
 }
 
+export interface LastServiceDetail extends ServiceDetail {
+  completed_at_jalali?: string;
+  checklist?: any;
+}
+
 export interface ServiceDetailResponse {
   success: boolean;
   data: ServiceDetail;
+  last_service?: LastServiceDetail | null;
   checklists?: ChecklistItem[];
   description_checklists?: ChecklistItem[];
 }

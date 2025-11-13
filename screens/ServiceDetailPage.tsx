@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform, BackHandler } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform, BackHandler, Modal, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '../services/buildingService';
-import type { ServiceDetail, ChecklistItem } from '../types';
+import type { ServiceDetail, ChecklistItem, LastServiceDetail } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage, type SignatureData } from './SignaturePage';
 
@@ -27,6 +27,7 @@ interface ServiceDetailPageProps {
 export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId, onBack }) => {
   const { technician } = useAuth();
   const [serviceDetail, setServiceDetail] = useState<ServiceDetail | null>(null);
+  const [lastService, setLastService] = useState<LastServiceDetail | null>(null);
   const [checklists, setChecklists] = useState<ChecklistItem[]>([]);
   const [descriptionChecklists, setDescriptionChecklists] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   const [managerSignature, setManagerSignature] = useState<SignatureData | null>(null);
   const [technicianSignature, setTechnicianSignature] = useState<SignatureData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLastServiceModal, setShowLastServiceModal] = useState(false);
 
   useEffect(() => {
     loadServiceDetail();
@@ -53,6 +55,10 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
       const response = await getServiceDetail(serviceId);
       if (response.success && response.data) {
         setServiceDetail(response.data);
+        // Store last_service if available
+        if (response.last_service) {
+          setLastService(response.last_service);
+        }
         // Store checklists if available
         if (response.checklists && Array.isArray(response.checklists)) {
           // Sort by order to ensure correct sequence
@@ -821,6 +827,644 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           ))}
         </View>
       </View>
+
+      {/* Organization Note */}
+      {serviceDetail.organization_note && (
+        <View style={{
+          backgroundColor: 'white',
+          borderRadius: 16,
+          padding: 16,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: '#F3F4F6',
+        }}>
+          <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 12 }}>
+            <View style={{
+              width: 32,
+              height: 32,
+              borderRadius: 10,
+              backgroundColor: '#EFF6FF',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 8,
+            }}>
+              <Ionicons name="business-outline" size={18} color="#0077B6" />
+            </View>
+            <Text style={{
+              fontSize: 16,
+              fontFamily: 'YekanBold',
+              color: '#1F2937',
+              textAlign: 'right',
+            }}>
+              یادداشت سازمان
+            </Text>
+          </View>
+          <Text style={{
+            fontSize: 14,
+            fontFamily: 'Yekan',
+            color: '#4B5563',
+            textAlign: 'right',
+            lineHeight: 24,
+          }}>
+            {serviceDetail.organization_note}
+          </Text>
+        </View>
+      )}
+
+      {/* User Note */}
+      {serviceDetail.user_note && (
+        <View style={{
+          backgroundColor: 'white',
+          borderRadius: 16,
+          padding: 16,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: '#F3F4F6',
+        }}>
+          <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 12 }}>
+            <View style={{
+              width: 32,
+              height: 32,
+              borderRadius: 10,
+              backgroundColor: '#ECFDF5',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 8,
+            }}>
+              <Ionicons name="person-outline" size={18} color="#10B981" />
+            </View>
+            <Text style={{
+              fontSize: 16,
+              fontFamily: 'YekanBold',
+              color: '#1F2937',
+              textAlign: 'right',
+            }}>
+              یادداشت کاربر
+            </Text>
+          </View>
+          <Text style={{
+            fontSize: 14,
+            fontFamily: 'Yekan',
+            color: '#4B5563',
+            textAlign: 'right',
+            lineHeight: 24,
+          }}>
+            {serviceDetail.user_note}
+          </Text>
+        </View>
+      )}
+
+      {/* Last Service */}
+      {lastService && (
+        <TouchableOpacity
+          onPress={() => setShowLastServiceModal(true)}
+          activeOpacity={0.7}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 12,
+            borderWidth: 1,
+            borderColor: '#F3F4F6',
+          }}
+        >
+          <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+            <View style={{
+              width: 32,
+              height: 32,
+              borderRadius: 10,
+              backgroundColor: '#FEF3C7',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 8,
+            }}>
+              <Ionicons name="time-outline" size={18} color="#F59E0B" />
+            </View>
+            <Text style={{
+              fontSize: 16,
+              fontFamily: 'YekanBold',
+              color: '#1F2937',
+              textAlign: 'right',
+              flex: 1,
+            }}>
+              آخرین سرویس
+            </Text>
+            <View style={{
+              backgroundColor: lastService.status === 'completed' ? '#ECFDF5' : '#F3F4F6',
+              borderRadius: 8,
+              paddingVertical: 4,
+              paddingHorizontal: 10,
+            }}>
+              <Text style={{
+                fontSize: 11,
+                fontFamily: 'YekanBold',
+                color: lastService.status === 'completed' ? '#10B981' : '#6B7280',
+              }}>
+                {lastService.status_text}
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ gap: 12 }}>
+            {/* Service Date */}
+            <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+              <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
+              <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+                {lastService.service_date_text}
+              </Text>
+            </View>
+
+            {/* Assigned At */}
+            <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+              <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
+              <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+                اختصاص داده شده: {lastService.assigned_at_jalali}
+              </Text>
+            </View>
+
+            {/* Completed At */}
+            {lastService.completed_at_jalali && (
+              <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 8 }} />
+                <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#10B981', textAlign: 'right' }}>
+                  تکمیل شده: {lastService.completed_at_jalali}
+                </Text>
+              </View>
+            )}
+
+            {/* Checklist Info */}
+            {lastService.checklist && (
+              <View style={{
+                backgroundColor: '#F9FAFB',
+                borderRadius: 12,
+                padding: 12,
+                marginTop: 8,
+              }}>
+                <Text style={{
+                  fontSize: 12,
+                  fontFamily: 'YekanBold',
+                  color: '#6B7280',
+                  textAlign: 'right',
+                  marginBottom: 8,
+                }}>
+                  چک لیست ثبت شده
+                </Text>
+                {lastService.checklist.elevator_checklists && lastService.checklist.elevator_checklists.length > 0 && (
+                  <View style={{ gap: 8 }}>
+                    {lastService.checklist.elevator_checklists.map((elevatorChecklist: any, index: number) => (
+                      <View key={index} style={{
+                        flexDirection: 'row-reverse',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingVertical: 8,
+                        borderBottomWidth: index < lastService.checklist.elevator_checklists.length - 1 ? 1 : 0,
+                        borderBottomColor: '#E5E7EB',
+                      }}>
+                        <View style={{ flex: 1, marginRight: 8 }}>
+                          <Text style={{
+                            fontSize: 13,
+                            fontFamily: 'YekanBold',
+                            color: '#1F2937',
+                            textAlign: 'right',
+                          }}>
+                            آسانسور {elevatorChecklist.elevator?.name || '---'}
+                          </Text>
+                          {elevatorChecklist.descriptions && elevatorChecklist.descriptions.length > 0 && (
+                            <Text style={{
+                              fontSize: 11,
+                              fontFamily: 'Yekan',
+                              color: '#6B7280',
+                              textAlign: 'right',
+                              marginTop: 4,
+                            }}>
+                              {elevatorChecklist.descriptions.length} مورد توضیحات
+                            </Text>
+                          )}
+                        </View>
+                        <View style={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: 6,
+                          backgroundColor: elevatorChecklist.verified ? '#ECFDF5' : '#FEF2F2',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                          {elevatorChecklist.verified && (
+                            <Ionicons name="checkmark" size={16} color="#10B981" />
+                          )}
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+          <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#F3F4F6' }}>
+            <Ionicons name="chevron-back" size={16} color="#6B7280" style={{ marginRight: 4 }} />
+            <Text style={{ fontSize: 12, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+              مشاهده جزئیات
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
+      {/* Last Service Detail Modal */}
+      <Modal
+        visible={showLastServiceModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowLastServiceModal(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{
+            flex: 1,
+            backgroundColor: '#F9FAFB',
+            marginTop: 100,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+          }}>
+            {/* Header */}
+            <View style={{
+              backgroundColor: 'white',
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              padding: 16,
+              flexDirection: 'row-reverse',
+              alignItems: 'center',
+              borderBottomWidth: 1,
+              borderBottomColor: '#F3F4F6',
+            }}>
+              <TouchableOpacity
+                onPress={() => setShowLastServiceModal(false)}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  backgroundColor: '#F3F4F6',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: 12,
+                }}
+              >
+                <Ionicons name="close" size={24} color="#6B7280" />
+              </TouchableOpacity>
+              <Text style={{
+                fontSize: 18,
+                fontFamily: 'YekanBold',
+                color: '#1F2937',
+                textAlign: 'right',
+                flex: 1,
+              }}>
+                جزئیات آخرین سرویس
+              </Text>
+            </View>
+
+            {/* Content */}
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ padding: 16 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {lastService && (
+                <>
+                  {/* Service Info */}
+                  <View style={{
+                    backgroundColor: 'white',
+                    borderRadius: 16,
+                    padding: 16,
+                    marginBottom: 12,
+                    borderWidth: 1,
+                    borderColor: '#F3F4F6',
+                  }}>
+                    <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+                      <View style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
+                        backgroundColor: '#FEF3C7',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: 12,
+                      }}>
+                        <Ionicons name="information-circle-outline" size={20} color="#F59E0B" />
+                      </View>
+                      <Text style={{
+                        fontSize: 16,
+                        fontFamily: 'YekanBold',
+                        color: '#1F2937',
+                        textAlign: 'right',
+                        flex: 1,
+                      }}>
+                        اطلاعات سرویس
+                      </Text>
+                      <View style={{
+                        backgroundColor: lastService.status === 'completed' ? '#ECFDF5' : '#F3F4F6',
+                        borderRadius: 8,
+                        paddingVertical: 6,
+                        paddingHorizontal: 10,
+                      }}>
+                        <Text style={{
+                          fontSize: 11,
+                          fontFamily: 'YekanBold',
+                          color: lastService.status === 'completed' ? '#10B981' : '#6B7280',
+                        }}>
+                          {lastService.status_text}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={{ gap: 12 }}>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                        <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
+                        <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+                          {lastService.service_date_text}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                        <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
+                        <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#6B7280', textAlign: 'right' }}>
+                          اختصاص داده شده: {lastService.assigned_at_jalali}
+                        </Text>
+                      </View>
+                      {lastService.completed_at_jalali && (
+                        <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                          <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 8 }} />
+                          <Text style={{ fontSize: 13, fontFamily: 'Yekan', color: '#10B981', textAlign: 'right' }}>
+                            تکمیل شده: {lastService.completed_at_jalali}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Elevator Checklists */}
+                  {lastService.checklist && lastService.checklist.elevator_checklists && lastService.checklist.elevator_checklists.length > 0 && (
+                    <View style={{
+                      backgroundColor: 'white',
+                      borderRadius: 16,
+                      padding: 16,
+                      marginBottom: 12,
+                      borderWidth: 1,
+                      borderColor: '#F3F4F6',
+                    }}>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+                        <View style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 12,
+                          backgroundColor: '#EFF6FF',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginLeft: 12,
+                        }}>
+                          <Ionicons name="list-outline" size={20} color="#0077B6" />
+                        </View>
+                        <Text style={{
+                          fontSize: 16,
+                          fontFamily: 'YekanBold',
+                          color: '#1F2937',
+                          textAlign: 'right',
+                          flex: 1,
+                        }}>
+                          چک لیست آسانسورها
+                        </Text>
+                      </View>
+
+                      <View style={{ gap: 16 }}>
+                        {lastService.checklist.elevator_checklists.map((elevatorChecklist: any, index: number) => (
+                          <View key={index} style={{
+                            backgroundColor: '#F9FAFB',
+                            borderRadius: 12,
+                            padding: 12,
+                            borderWidth: 1,
+                            borderColor: '#E5E7EB',
+                          }}>
+                            {/* Elevator Header */}
+                            <View style={{
+                              flexDirection: 'row-reverse',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginBottom: 12,
+                              paddingBottom: 12,
+                              borderBottomWidth: 1,
+                              borderBottomColor: '#E5E7EB',
+                            }}>
+                              <Text style={{
+                                fontSize: 15,
+                                fontFamily: 'YekanBold',
+                                color: '#1F2937',
+                                textAlign: 'right',
+                              }}>
+                                آسانسور {elevatorChecklist.elevator?.name || '---'}
+                              </Text>
+                              <View style={{
+                                flexDirection: 'row-reverse',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}>
+                                <View style={{
+                                  width: 24,
+                                  height: 24,
+                                  borderRadius: 6,
+                                  backgroundColor: elevatorChecklist.verified ? '#ECFDF5' : '#FEF2F2',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                  {elevatorChecklist.verified && (
+                                    <Ionicons name="checkmark" size={16} color="#10B981" />
+                                  )}
+                                </View>
+                                <Text style={{
+                                  fontSize: 12,
+                                  fontFamily: 'Yekan',
+                                  color: elevatorChecklist.verified ? '#10B981' : '#EF4444',
+                                }}>
+                                  {elevatorChecklist.verified ? 'تایید شده' : 'تایید نشده'}
+                                </Text>
+                              </View>
+                            </View>
+
+                            {/* Descriptions */}
+                            {elevatorChecklist.descriptions && elevatorChecklist.descriptions.length > 0 && (
+                              <View style={{ gap: 8 }}>
+                                <Text style={{
+                                  fontSize: 13,
+                                  fontFamily: 'YekanBold',
+                                  color: '#6B7280',
+                                  textAlign: 'right',
+                                  marginBottom: 8,
+                                }}>
+                                  توضیحات:
+                                </Text>
+                                {elevatorChecklist.descriptions.map((desc: any, descIndex: number) => (
+                                  <View key={descIndex} style={{
+                                    backgroundColor: 'white',
+                                    borderRadius: 8,
+                                    padding: 10,
+                                    borderRightWidth: 2,
+                                    borderRightColor: '#0077B6',
+                                  }}>
+                                    <Text style={{
+                                      fontSize: 13,
+                                      fontFamily: 'YekanBold',
+                                      color: '#1F2937',
+                                      textAlign: 'right',
+                                      marginBottom: 4,
+                                    }}>
+                                      {desc.title}
+                                    </Text>
+                                    {desc.description && (
+                                      <Text style={{
+                                        fontSize: 12,
+                                        fontFamily: 'Yekan',
+                                        color: '#6B7280',
+                                        textAlign: 'right',
+                                        marginTop: 4,
+                                      }}>
+                                        {desc.description}
+                                      </Text>
+                                    )}
+                                  </View>
+                                ))}
+                              </View>
+                            )}
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+
+                  {/* Signatures */}
+                  {lastService.checklist && (lastService.checklist.manager_signature || lastService.checklist.technician_signature) && (
+                    <View style={{
+                      backgroundColor: 'white',
+                      borderRadius: 16,
+                      padding: 16,
+                      marginBottom: 12,
+                      borderWidth: 1,
+                      borderColor: '#F3F4F6',
+                    }}>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+                        <View style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 12,
+                          backgroundColor: '#F3E8FF',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginLeft: 12,
+                        }}>
+                          <Ionicons name="create-outline" size={20} color="#8B5CF6" />
+                        </View>
+                        <Text style={{
+                          fontSize: 16,
+                          fontFamily: 'YekanBold',
+                          color: '#1F2937',
+                          textAlign: 'right',
+                          flex: 1,
+                        }}>
+                          امضاها
+                        </Text>
+                      </View>
+
+                      <View style={{ gap: 16 }}>
+                        {/* Manager Signature */}
+                        {lastService.checklist.manager_signature && (
+                          <View style={{
+                            backgroundColor: '#F9FAFB',
+                            borderRadius: 12,
+                            padding: 12,
+                            borderWidth: 1,
+                            borderColor: '#E5E7EB',
+                          }}>
+                            <Text style={{
+                              fontSize: 13,
+                              fontFamily: 'YekanBold',
+                              color: '#1F2937',
+                              textAlign: 'right',
+                              marginBottom: 8,
+                            }}>
+                              امضای نماینده/مدیر ساختمان
+                            </Text>
+                            <Text style={{
+                              fontSize: 12,
+                              fontFamily: 'Yekan',
+                              color: '#6B7280',
+                              textAlign: 'right',
+                              marginBottom: 12,
+                            }}>
+                              {lastService.checklist.manager_signature.name}
+                            </Text>
+                            {lastService.checklist.manager_signature.signature && (
+                              <Image
+                                source={{ uri: lastService.checklist.manager_signature.signature }}
+                                style={{
+                                  width: '100%',
+                                  height: 120,
+                                  borderRadius: 8,
+                                  backgroundColor: 'white',
+                                  borderWidth: 1,
+                                  borderColor: '#E5E7EB',
+                                }}
+                                resizeMode="contain"
+                              />
+                            )}
+                          </View>
+                        )}
+
+                        {/* Technician Signature */}
+                        {lastService.checklist.technician_signature && (
+                          <View style={{
+                            backgroundColor: '#F9FAFB',
+                            borderRadius: 12,
+                            padding: 12,
+                            borderWidth: 1,
+                            borderColor: '#E5E7EB',
+                          }}>
+                            <Text style={{
+                              fontSize: 13,
+                              fontFamily: 'YekanBold',
+                              color: '#1F2937',
+                              textAlign: 'right',
+                              marginBottom: 8,
+                            }}>
+                              امضای سرویس کار
+                            </Text>
+                            <Text style={{
+                              fontSize: 12,
+                              fontFamily: 'Yekan',
+                              color: '#6B7280',
+                              textAlign: 'right',
+                              marginBottom: 12,
+                            }}>
+                              {lastService.checklist.technician_signature.name}
+                            </Text>
+                            {lastService.checklist.technician_signature.signature && (
+                              <Image
+                                source={{ uri: lastService.checklist.technician_signature.signature }}
+                                style={{
+                                  width: '100%',
+                                  height: 120,
+                                  borderRadius: 8,
+                                  backgroundColor: 'white',
+                                  borderWidth: 1,
+                                  borderColor: '#E5E7EB',
+                                }}
+                                resizeMode="contain"
+                              />
+                            )}
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  )}
+                </>
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* Register Checklist Button */}
       <TouchableOpacity
