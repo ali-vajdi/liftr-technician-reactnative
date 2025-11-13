@@ -1,6 +1,6 @@
 import apiClient from './api';
 import { API_ENDPOINTS } from '../config/api.config';
-import type { AssignedBuildingsResponse, ServiceDetailResponse } from '../types';
+import type { AssignedBuildingsResponse, ServiceDetailResponse, ReportsResponse } from '../types';
 
 /**
  * Fetch assigned buildings for the authenticated technician
@@ -67,6 +67,20 @@ export const submitChecklist = async (
     const response = await apiClient.post<SubmitChecklistResponse>(
       API_ENDPOINTS.SUBMIT_CHECKLIST(serviceId),
       payload
+    );
+    return response.data;
+  } catch (error: any) {
+    throw handleError(error);
+  }
+};
+
+/**
+ * Fetch reports data for the authenticated technician
+ */
+export const getReports = async (): Promise<ReportsResponse> => {
+  try {
+    const response = await apiClient.get<ReportsResponse>(
+      API_ENDPOINTS.TECHNICIAN.REPORTS
     );
     return response.data;
   } catch (error: any) {

@@ -158,3 +158,32 @@ export interface ServiceDetailResponse {
   description_checklists?: ChecklistItem[];
 }
 
+export interface ReportStats {
+  total: number;
+  pending: number;
+  assigned: number;
+  completed: number;
+  expired: number;
+  completion_rate: number;
+}
+
+export interface LastService {
+  id: number;
+  building_name: string;
+  building_address: string;
+  service_month: number;
+  service_year: number;
+  status: string;
+  status_text: string;
+  assigned_at: string;
+  completed_at: string | null;
+}
+
+export interface ReportsResponse {
+  success: boolean;
+  today: ReportStats;
+  current_month: ReportStats;
+  overall: ReportStats;
+  last_services: LastService[];
+}
+
