@@ -853,7 +853,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               color: '#1F2937',
               textAlign: 'right',
             }}>
-              یادداشت سازمان
+            درخواست مدیر ساختمان
             </Text>
           </View>
           <Text style={{

@@ -294,55 +294,87 @@ export const ReportsPage: React.FC = () => {
     );
   };
 
+  const renderHeader = () => (
+    <View style={{
+      backgroundColor: 'white',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: '#F3F4F6',
+    }}>
+      <Text style={{
+        fontSize: 22,
+        fontFamily: 'YekanBakhFaNum-Bold',
+        color: '#1F2937',
+        textAlign: 'right',
+      }}>
+        گزارش
+      </Text>
+    </View>
+  );
+
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#0077B6" />
-        <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginTop: 12 }}>
-          در حال بارگذاری گزارش‌ها...
-        </Text>
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+        {renderHeader()}
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color="#0077B6" />
+          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginTop: 12 }}>
+            در حال بارگذاری گزارش‌ها...
+          </Text>
+        </View>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
-        <Text style={{ fontSize: 16, fontFamily: 'YekanBakhFaNum-Bold', color: '#1F2937', marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
-          خطا در بارگذاری گزارش‌ها
-        </Text>
-        <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginBottom: 20, textAlign: 'center' }}>
-          {error}
-        </Text>
-        <TouchableOpacity
-          onPress={loadReports}
-          style={{
-            backgroundColor: '#0077B6',
-            borderRadius: 12,
-            paddingVertical: 12,
-            paddingHorizontal: 24,
-          }}
-        >
-          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Bold', color: 'white' }}>
-            تلاش مجدد
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+        {renderHeader()}
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+          <Text style={{ fontSize: 16, fontFamily: 'YekanBakhFaNum-Bold', color: '#1F2937', marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
+            خطا در بارگذاری گزارش‌ها
           </Text>
-        </TouchableOpacity>
+          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginBottom: 20, textAlign: 'center' }}>
+            {error}
+          </Text>
+          <TouchableOpacity
+            onPress={loadReports}
+            style={{
+              backgroundColor: '#0077B6',
+              borderRadius: 12,
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Bold', color: 'white' }}>
+              تلاش مجدد
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
   if (!reports) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+        {renderHeader()}
+      </View>
+    );
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-gray-50"
-      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Today Stats - Detailed */}
+    <View className="flex-1 bg-gray-50">
+      {renderHeader()}
+
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Today Stats - Detailed */}
       <StatCard
         title="امروز"
         stats={reports.today}
@@ -441,5 +473,6 @@ export const ReportsPage: React.FC = () => {
         </View>
       )}
     </ScrollView>
+    </View>
   );
 };

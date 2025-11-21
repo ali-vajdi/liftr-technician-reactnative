@@ -25,7 +25,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted }) =>
             لیفتر
           </Text>
           <Text className="text-gray-600 text-base sm:text-lg font-yekan text-center">
-            پلتفرم مدیریت خدمات فنی
+          چک لیست الکترونیکی
           </Text>
         </View>
 
@@ -36,7 +36,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onGetStarted }) =>
           activeOpacity={0.8}
         >
           <Text className="text-white text-lg sm:text-xl font-yekan-bold">
-            شروع کنید
+            ورود به سیستم
           </Text>
         </TouchableOpacity>
       </View>

@@ -64,12 +64,31 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   return (
-    <ScrollView 
-      className="flex-1 bg-gray-50" 
-      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20, paddingTop: 20 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Profile Header */}
+    <View className="flex-1 bg-gray-50">
+      {/* Page Header */}
+      <View style={{
+        backgroundColor: 'white',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+      }}>
+        <Text style={{
+          fontSize: 22,
+          fontFamily: 'YekanBakhFaNum-Bold',
+          color: '#1F2937',
+          textAlign: 'right',
+        }}>
+          تنظیمات
+        </Text>
+      </View>
+
+      <ScrollView 
+        className="flex-1" 
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20, paddingTop: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Header */}
       <View
         className="bg-white rounded-3xl w-full p-6 mb-4"
         style={{
@@ -201,6 +220,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </View>
   );
 };
 
