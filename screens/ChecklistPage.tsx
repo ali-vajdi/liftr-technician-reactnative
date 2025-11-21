@@ -549,7 +549,7 @@ export const ChecklistPage: React.FC<ChecklistPageProps> = ({
                 color: '#1F2937',
                 textAlign: 'right',
               }}>
-                افزودن توضیحات سفارشی
+                افزودن سایر توضیحات
               </Text>
               <TouchableOpacity
                 onPress={() => setShowCustomDescriptionModal(false)}
