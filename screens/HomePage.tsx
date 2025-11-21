@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getAssignedBuildings } from '../services/buildingService';
 import type { AssignedBuilding } from '../types';
@@ -13,6 +14,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
   const [buildings, setBuildings] = useState<AssignedBuilding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadBuildings();
@@ -116,7 +118,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
 
       <ScrollView 
         className="flex-1" 
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20, paddingTop: 24 }}
+        contentContainerStyle={{ 
+          paddingBottom: 90 + insets.bottom, 
+          paddingHorizontal: 20, 
+          paddingTop: 24 
+        }}
         showsVerticalScrollIndicator={false}
       >
 

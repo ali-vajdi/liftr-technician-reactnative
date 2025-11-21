@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getReports } from '../services/buildingService';
 import type { ReportsResponse, ReportStats, LastService } from '../types';
@@ -9,6 +10,7 @@ export const ReportsPage: React.FC = () => {
   const [reports, setReports] = useState<ReportsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadReports();
@@ -371,7 +373,11 @@ export const ReportsPage: React.FC = () => {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
+        contentContainerStyle={{ 
+          paddingBottom: 90 + insets.bottom, 
+          paddingHorizontal: 16, 
+          paddingTop: 16 
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Today Stats - Detailed */}

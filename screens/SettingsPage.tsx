@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { Technician } from '../types';
 import { formatPersianPhoneNumber, toPersianDigits } from '../utils/numberUtils';
@@ -15,6 +16,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   phoneNumber,
   onLogout,
 }) => {
+  const insets = useSafeAreaInsets();
 
   const InfoRow: React.FC<{ label: string; value?: string; icon: any }> = ({ label, value = 'نامشخص', icon }) => {
     return (
@@ -85,7 +87,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
       <ScrollView 
         className="flex-1" 
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 20, paddingTop: 20 }}
+        contentContainerStyle={{ 
+          paddingBottom: 90 + insets.bottom, 
+          paddingHorizontal: 20, 
+          paddingTop: 20 
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header */}
