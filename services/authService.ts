@@ -1,9 +1,10 @@
 import apiClient from './api';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_ENDPOINTS } from '../config/api.config';
-import type { Technician, LoginResponse, SendOtpResponse, ApiErrorResponse } from '../types';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
+import type { Technician, LoginResponse, SendOtpResponse, ApiErrorResponse, CheckUpdateResponse } from '../types';
 
-export type { Technician, LoginResponse };
+export type { Technician, LoginResponse, CheckUpdateResponse };
 
 class AuthService {
   /**
@@ -137,6 +138,33 @@ class AuthService {
       return data ? JSON.parse(data) : null;
     } catch (error) {
       return null;
+    }
+  }
+
+  /**
+   * Check for app updates
+   * This uses a direct axios call to avoid showing loading modal and auth requirements
+   */
+  async checkUpdate(platform: string, version: string): Promise<CheckUpdateResponse> {
+    try {
+      // Use direct axios call to bypass interceptors (no loading, no auth required)
+      const response = await axios.post<CheckUpdateResponse>(
+        `${API_CONFIG.BASE_URL}${API_ENDPOINTS.TECHNICIAN.CHECK_UPDATE}`,
+        {
+          platform,
+          version,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          timeout: API_CONFIG.TIMEOUT,
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw this.handleError(error);
     }
   }
 

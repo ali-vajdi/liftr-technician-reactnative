@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, BackHand
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
+import Constants from 'expo-constants';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { PasswordScreen } from './screens/PasswordScreen';
@@ -11,7 +12,9 @@ import { DashboardScreen } from './screens/DashboardScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoadingProvider, useLoading } from './context/LoadingContext';
 import { LoadingModal } from './components/ui/LoadingModal';
+import { UpdateDialog } from './components/ui/UpdateDialog';
 import { setLoadingCallback } from './services/api';
+import authService, { type CheckUpdateResponse } from './services/authService';
 import { fonts } from './fonts.config';
 import './global.css';
 
@@ -30,6 +33,13 @@ function AppContent() {
     title: '',
     message: ''
   });
+  const [updateInfo, setUpdateInfo] = useState<{
+    visible: boolean;
+    forceUpdate: boolean;
+    description: string;
+    latestVersion: string;
+    currentVersion: string;
+  } | null>(null);
 
   // Connect axios loading callback
   useEffect(() => {
@@ -41,6 +51,38 @@ function AppContent() {
       }
     });
   }, [showLoading, hideLoading]);
+
+  // Check for app updates on Android app start
+  useEffect(() => {
+    const checkForUpdates = async () => {
+      // Only check updates for Android
+      if (Platform.OS !== 'android') {
+        return;
+      }
+
+      try {
+        // Get app version from app.json (via Constants)
+        const appVersion = Constants.expoConfig?.version || '1.0.1';
+        
+        const response: CheckUpdateResponse = await authService.checkUpdate('android', appVersion);
+        
+        if (response.success && response.has_update) {
+          setUpdateInfo({
+            visible: true,
+            forceUpdate: response.force_update,
+            description: response.description,
+            latestVersion: response.latest_version,
+            currentVersion: response.current_version,
+          });
+        }
+      } catch (error) {
+        // Silently handle update check errors - don't block app if check fails
+        console.error('Failed to check for updates:', error);
+      }
+    };
+
+    checkForUpdates();
+  }, []);
 
   const showMessage = (type: 'success' | 'error', title: string, message: string) => {
     setMessageModal({ visible: true, type, title, message });
@@ -245,6 +287,23 @@ function AppContent() {
     );
   }
 
+  // Block app if force update is required
+  if (updateInfo?.visible && updateInfo.forceUpdate) {
+    return (
+      <SafeAreaProvider>
+        <View className="flex-1 bg-white">
+          <UpdateDialog
+            visible={true}
+            forceUpdate={true}
+            description={updateInfo.description}
+            latestVersion={updateInfo.latestVersion}
+            currentVersion={updateInfo.currentVersion}
+          />
+        </View>
+      </SafeAreaProvider>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <View className="flex-1 bg-white">
@@ -256,6 +315,18 @@ function AppContent() {
           visible={apiLoading} 
           message={loadingMessage}
         />
+
+        {/* Update Dialog */}
+        {updateInfo && (
+          <UpdateDialog
+            visible={updateInfo.visible}
+            forceUpdate={updateInfo.forceUpdate}
+            description={updateInfo.description}
+            latestVersion={updateInfo.latestVersion}
+            currentVersion={updateInfo.currentVersion}
+            onClose={() => setUpdateInfo({ ...updateInfo, visible: false })}
+          />
+        )}
 
         {/* Message Modal */}
         <Modal

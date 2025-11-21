@@ -195,3 +195,13 @@ export interface ReportsResponse {
   last_services: LastService[];
 }
 
+export interface CheckUpdateResponse {
+  success: boolean;
+  has_update: boolean;
+  force_update: boolean;
+  latest_version: string;
+  current_version: string;
+  description: string;
+  platform: string;
+}
+
