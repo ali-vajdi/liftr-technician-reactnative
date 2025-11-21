@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getAssignedBuildings } from '../services/buildingService';
@@ -13,6 +13,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
   const [buildings, setBuildings] = useState<AssignedBuilding[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
 
@@ -20,9 +21,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
     loadBuildings();
   }, []);
 
-  const loadBuildings = async () => {
+  const loadBuildings = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
       const response = await getAssignedBuildings();
       if (response.success && response.data) {
@@ -32,7 +37,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
       setError(err.message || 'خطا در بارگذاری ساختمان‌ها');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const onRefresh = async () => {
+    await loadBuildings(true);
   };
 
   const renderHeader = () => (
@@ -42,15 +52,46 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
       paddingVertical: 16,
       borderBottomWidth: 1,
       borderBottomColor: '#F3F4F6',
+      flexDirection: 'row-reverse',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     }}>
       <Text style={{
         fontSize: 22,
         fontFamily: 'YekanBakhFaNum-Bold',
         color: '#1F2937',
         textAlign: 'right',
+        flex: 1,
       }}>
         خانه
       </Text>
+      {Platform.OS === 'web' && (
+        <TouchableOpacity
+          onPress={onRefresh}
+          disabled={refreshing}
+          style={{
+            padding: 8,
+            marginLeft: 12,
+            borderRadius: 8,
+            backgroundColor: refreshing ? '#F3F4F6' : 'transparent',
+            minWidth: 40,
+            minHeight: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          activeOpacity={0.7}
+        >
+          {refreshing ? (
+            <ActivityIndicator size="small" color="#0077B6" />
+          ) : (
+            <Ionicons 
+              name="refresh-outline" 
+              size={24} 
+              color="#0077B6"
+            />
+          )}
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -118,12 +159,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
 
       <ScrollView 
         className="flex-1" 
+        style={{ flex: 1 }}
         contentContainerStyle={{ 
+          flexGrow: 1,
           paddingBottom: 90 + insets.bottom, 
           paddingHorizontal: 20, 
           paddingTop: 24 
         }}
         showsVerticalScrollIndicator={false}
+        bounces={true}
+        alwaysBounceVertical={true}
+        scrollEventThrottle={16}
+        refreshControl={
+          Platform.OS !== 'web' ? (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#0077B6']}
+              tintColor="#0077B6"
+            />
+          ) : undefined
+        }
       >
 
       {/* Buildings List */}

@@ -342,7 +342,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({
             elevation: 4,
           }}
         >
-          <Ionicons name="arrow-forward" size={20} color="white" style={{ marginLeft: 8 }} />
+          <Ionicons name="arrow-back" size={20} color="white" style={{ marginLeft: 8 }} />
           <Text style={{
             fontSize: 15,
             fontFamily: 'YekanBakhFaNum-Bold',
