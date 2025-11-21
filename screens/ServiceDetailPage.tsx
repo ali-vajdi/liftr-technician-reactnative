@@ -246,11 +246,11 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           setTimeout(() => {
             try {
               Alert.alert(
-                'تکمیل شد',
+                '',
                 'چک لیست با موفقیت ثبت شد و سرویس تکمیل گردید',
                 [
                   {
-                    text: 'باشه',
+                    text: 'بستن',
                     onPress: handleSuccess,
                   },
                 ],
