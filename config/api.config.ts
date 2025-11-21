@@ -6,7 +6,7 @@
 
 export const API_CONFIG = {
   // Base URL for API requests
-  BASE_URL: 'http://127.0.0.1:8000/api',
+  BASE_URL: 'https://app.liftr.ir/api',
   
   // Request timeout in milliseconds
   TIMEOUT: 10000,
