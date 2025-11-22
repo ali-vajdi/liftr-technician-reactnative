@@ -1398,13 +1398,13 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                 source={{ uri: lastService.checklist.manager_signature.signature }}
                                 style={{
                                   width: '100%',
-                                  height: 120,
+                                  height: 200,
                                   borderRadius: 8,
                                   backgroundColor: 'white',
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="cover"
+                                resizeMode="contain"
                               />
                             )}
                           </View>
@@ -1442,13 +1442,13 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                 source={{ uri: lastService.checklist.technician_signature.signature }}
                                 style={{
                                   width: '100%',
-                                  height: 120,
+                                  height: 200,
                                   borderRadius: 8,
                                   backgroundColor: 'white',
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="cover"
+                                resizeMode="contain"
                               />
                             )}
                           </View>
