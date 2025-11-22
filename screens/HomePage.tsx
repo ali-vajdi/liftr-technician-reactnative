@@ -257,7 +257,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                   fontFamily: 'YekanBakhFaNum-Bold',
                   color: '#0077B6',
                 }}>
-                  {toPersianDigits(building.elevators_count)} آسانسور
+                  تعداد آسانسور: {toPersianDigits(building.elevators_count)}
                 </Text>
               </View>
             </View>

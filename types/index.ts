@@ -205,3 +205,70 @@ export interface CheckUpdateResponse {
   platform: string;
 }
 
+export interface MessageSender {
+  id: number;
+  name: string;
+  address: string;
+  logo: string | null;
+  status: boolean;
+  sms_balance: string;
+  sms_cost_per_message: string;
+  moderator_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MessageService {
+  id: number;
+  building_id: number;
+  technician_id: number | null;
+  service_month: number;
+  service_year: number;
+  status: string;
+  is_manual: boolean;
+  notes: string | null;
+  organization_note: string | null;
+  user_note: string | null;
+  assigned_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Message {
+  id: number;
+  sender_type: string;
+  sender_id: number;
+  receiver_type: string;
+  receiver_id: number;
+  subject: string;
+  message: string;
+  is_read: boolean;
+  read_at: string | null;
+  service_id: number | null;
+  created_at: string;
+  updated_at: string;
+  created_at_jalali: string;
+  read_at_jalali?: string | null;
+  sender_name: string;
+  sender: MessageSender;
+  service: MessageService | null;
+}
+
+export interface MessagesResponse {
+  success: boolean;
+  data: Message[];
+}
+
+export interface UnreadCountResponse {
+  success: boolean;
+  data: {
+    unread_count: number;
+  };
+}
+
+export interface MarkReadResponse {
+  success: boolean;
+  message?: string;
+}
+

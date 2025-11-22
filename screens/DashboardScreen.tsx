@@ -10,6 +10,8 @@ import { HomePage } from './HomePage';
 import { ReportsPage } from './ReportsPage';
 import { SettingsPage } from './SettingsPage';
 import { ServiceDetailPage } from './ServiceDetailPage';
+import { MessagesPage } from './MessagesPage';
+import messageService from '../services/messageService';
 
 interface DashboardScreenProps {
   phoneNumber: string;
@@ -31,18 +33,28 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const [technician, setTechnician] = useState(contextTechnician);
   const [loading, setLoading] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
+  const [showMessages, setShowMessages] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     loadProfile();
+    loadMessagesCount();
   }, []);
+
+  // Refresh unread count when returning from messages page
+  useEffect(() => {
+    if (!showMessages) {
+      loadMessagesCount();
+    }
+  }, [showMessages]);
 
   // Notify parent when detail page state changes
   useEffect(() => {
     if (onDetailPageChange) {
-      onDetailPageChange(!!selectedServiceId);
+      onDetailPageChange(!!selectedServiceId || showMessages);
     }
-  }, [selectedServiceId, onDetailPageChange]);
+  }, [selectedServiceId, showMessages, onDetailPageChange]);
 
   const loadProfile = async () => {
     try {
@@ -53,6 +65,17 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       // Silently handle profile load errors
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMessagesCount = async () => {
+    try {
+      const response = await messageService.getUnreadCount();
+      if (response.success && response.data) {
+        setUnreadCount(response.data.unread_count);
+      }
+    } catch (error: any) {
+      // Silently handle messages load errors
     }
   };
 
@@ -81,7 +104,19 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     setSelectedServiceId(null);
   };
 
+  const handleMessagesPress = () => {
+    setShowMessages(true);
+  };
+
+  const handleBackFromMessages = () => {
+    setShowMessages(false);
+  };
+
   const renderPage = () => {
+    if (showMessages) {
+      return <MessagesPage onBack={handleBackFromMessages} onMessagesRead={loadMessagesCount} />;
+    }
+
     if (selectedServiceId) {
       return (
         <ServiceDetailPage 
@@ -112,8 +147,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top', 'left', 'right']}>
       <Header 
         organizationName={getOrganizationName()} 
-        onBackPress={handleBackFromDetail}
-        showBack={!!selectedServiceId}
+        onBackPress={showMessages ? handleBackFromMessages : handleBackFromDetail}
+        showBack={!!selectedServiceId || showMessages}
+        onMessagesPress={handleMessagesPress}
+        unreadCount={unreadCount}
       />
 
       {/* Page Content */}
@@ -128,8 +165,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         onCancel={cancelLogout}
       />
 
-      {/* Sticky Bottom Navigation - Hide when viewing service detail */}
-      {!selectedServiceId && (
+      {/* Sticky Bottom Navigation - Hide when viewing service detail or messages */}
+      {!selectedServiceId && !showMessages && (
       <View style={{
         position: 'absolute',
         bottom: 0,
