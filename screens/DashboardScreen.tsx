@@ -16,6 +16,7 @@ interface DashboardScreenProps {
   onLogout: () => void;
   onNavigate?: (page: 'reports' | 'home' | 'settings') => void;
   activePage?: 'reports' | 'home' | 'settings';
+  onDetailPageChange?: (isOnDetailPage: boolean) => void;
 }
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({ 
@@ -23,6 +24,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   onLogout,
   onNavigate,
   activePage = 'home',
+  onDetailPageChange,
 }) => {
   const { technician: contextTechnician } = useAuth();
   const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
@@ -34,6 +36,13 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   useEffect(() => {
     loadProfile();
   }, []);
+
+  // Notify parent when detail page state changes
+  useEffect(() => {
+    if (onDetailPageChange) {
+      onDetailPageChange(!!selectedServiceId);
+    }
+  }, [selectedServiceId, onDetailPageChange]);
 
   const loadProfile = async () => {
     try {

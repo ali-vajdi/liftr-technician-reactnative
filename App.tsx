@@ -27,6 +27,7 @@ function AppContent() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activePage, setActivePage] = useState<'reports' | 'home' | 'settings'>('home');
+  const [isOnDetailPage, setIsOnDetailPage] = useState(false);
   const [messageModal, setMessageModal] = useState<{ visible: boolean; type: 'success' | 'error'; title: string; message: string }>({
     visible: false,
     type: 'success',
@@ -213,16 +214,57 @@ function AppContent() {
         handleBack();
         return true; // Prevent default back behavior
       }
-      // On dashboard, prevent exiting app (stay on dashboard)
-      if (currentScreen === 'dashboard') {
-        return true; // Prevent default back behavior (exit app)
+      // On dashboard main pages (home, reports, settings), show confirmation dialog
+      if (currentScreen === 'dashboard' && !isOnDetailPage) {
+        Alert.alert(
+          'خروج از برنامه',
+          'آیا می‌خواهید برنامه را ببندید؟',
+          [
+            {
+              text: 'خیر',
+              style: 'cancel',
+              onPress: () => {}, // Do nothing, stay in app
+            },
+            {
+              text: 'بله',
+              style: 'destructive',
+              onPress: () => {
+                BackHandler.exitApp();
+              },
+            },
+          ],
+          { cancelable: true }
+        );
+        return true; // Prevent default back behavior
       }
-      // On welcome screen, allow default behavior (exit app)
+      // On welcome screen, show confirmation dialog before exiting
+      if (currentScreen === 'welcome') {
+        Alert.alert(
+          'خروج از برنامه',
+          'آیا می‌خواهید برنامه را ببندید؟',
+          [
+            {
+              text: 'خیر',
+              style: 'cancel',
+              onPress: () => {}, // Do nothing, stay in app
+            },
+            {
+              text: 'بله',
+              style: 'destructive',
+              onPress: () => {
+                BackHandler.exitApp();
+              },
+            },
+          ],
+          { cancelable: true }
+        );
+        return true; // Prevent default back behavior
+      }
       return false;
     });
 
     return () => backHandler.remove();
-  }, [currentScreen, handleBack]);
+  }, [currentScreen, handleBack, isOnDetailPage]);
 
   const handleNavigate = (page: 'reports' | 'home' | 'settings') => {
     setActivePage(page);
@@ -266,6 +308,7 @@ function AppContent() {
             onLogout={handleLogout}
             onNavigate={handleNavigate}
             activePage={activePage}
+            onDetailPageChange={setIsOnDetailPage}
           />
         );
       default:
