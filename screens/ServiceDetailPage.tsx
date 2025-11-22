@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform, BackHandler, Modal, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Alert, InteractionManager, Platform, BackHandler, Modal, Image, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '../services/buildingService';
@@ -18,7 +18,8 @@ type ChecklistFlowState =
   | 'detail'
   | 'checklist'
   | 'manager-signature'
-  | 'technician-signature';
+  | 'technician-signature'
+  | 'technician-note';
 
 interface ServiceDetailPageProps {
   serviceId: number;
@@ -42,6 +43,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
   // Store signature data
   const [managerSignature, setManagerSignature] = useState<SignatureData | null>(null);
   const [technicianSignature, setTechnicianSignature] = useState<SignatureData | null>(null);
+  const [technicianNote, setTechnicianNote] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLastServiceModal, setShowLastServiceModal] = useState(false);
 
@@ -142,25 +144,18 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
     setFlowState('technician-signature');
   };
 
-  const handleTechnicianSignatureNext = async (signatureData?: SignatureData) => {
+  const handleTechnicianSignatureNext = (signatureData?: SignatureData) => {
     if (!signatureData) {
       Alert.alert('خطا', 'لطفاً امضای سرویس کار را تکمیل کنید');
       return;
     }
 
     setTechnicianSignature(signatureData);
-
-    // Submit checklist when technician signature is completed
-    // Use the signatureData directly and managerSignature from state
-    if (managerSignature) {
-      await handleSubmitChecklist(managerSignature, signatureData);
-    } else {
-      Alert.alert('خطا', 'امضای نماینده/مدیر ساختمان یافت نشد. لطفاً دوباره تلاش کنید.');
-      setFlowState('manager-signature');
-    }
+    // Go to technician note page instead of submitting
+    setFlowState('technician-note');
   };
 
-  const handleSubmitChecklist = async (managerSig: SignatureData, technicianSig: SignatureData) => {
+  const handleSubmitChecklist = async (managerSig: SignatureData, technicianSig: SignatureData, note?: string | null) => {
     if (!serviceDetail?.building?.elevators) {
       return;
     }
@@ -200,6 +195,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           name: technicianSig.name.trim(),
           signature: technicianSig.signature,
         },
+        technician_note: note && note.trim() ? note.trim() : null,
       };
 
       const response = await submitChecklist(serviceId, payload);
@@ -223,6 +219,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           setCurrentElevatorIndex(0);
           setManagerSignature(null);
           setTechnicianSignature(null);
+          setTechnicianNote('');
           setElevatorDescriptions({});
           setElevatorVerified({});
           // Close the service detail page and go back
@@ -295,6 +292,9 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         break;
       case 'technician-signature':
         setFlowState('manager-signature');
+        break;
+      case 'technician-note':
+        setFlowState('technician-signature');
         break;
       default:
         onBack();
@@ -542,6 +542,157 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           onNext={handleTechnicianSignatureNext}
           onBack={handleFlowBack}
         />
+      </>
+    );
+  }
+
+  if (flowState === 'technician-note') {
+    const handleNoteSubmit = async () => {
+      if (!managerSignature || !technicianSignature) {
+        Alert.alert('خطا', 'امضاها یافت نشد. لطفاً دوباره تلاش کنید.');
+        setFlowState('manager-signature');
+        return;
+      }
+      await handleSubmitChecklist(managerSignature, technicianSignature, technicianNote);
+    };
+
+    return (
+      <>
+        <View style={{
+          backgroundColor: 'white',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: '#F3F4F6',
+          flexDirection: 'row-reverse',
+          alignItems: 'center',
+        }}>
+          <TouchableOpacity
+            onPress={handleFlowBack}
+            activeOpacity={0.7}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: '#F3F4F6',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 12,
+            }}
+          >
+            <Ionicons name="arrow-forward" size={20} color="#4B5563" />
+          </TouchableOpacity>
+          <Text style={{
+            fontSize: 18,
+            fontFamily: 'YekanBakhFaNum-Bold',
+            color: '#1F2937',
+            textAlign: 'right',
+            flex: 1,
+          }}>
+            یادداشت سرویس کار
+          </Text>
+        </View>
+        <ScrollView
+          style={{ flex: 1, backgroundColor: '#F9FAFB' }}
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{
+            backgroundColor: 'white',
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 16,
+            borderWidth: 1,
+            borderColor: '#F3F4F6',
+          }}>
+            <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 16 }}>
+              <View style={{
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                backgroundColor: '#EFF6FF',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: 12,
+              }}>
+                <Ionicons name="document-text-outline" size={20} color="#0077B6" />
+              </View>
+              <Text style={{
+                fontSize: 16,
+                fontFamily: 'YekanBakhFaNum-Bold',
+                color: '#1F2937',
+                textAlign: 'right',
+                flex: 1,
+              }}>
+                یادداشت سرویس کار (اختیاری)
+              </Text>
+            </View>
+            <TextInput
+              value={technicianNote}
+              onChangeText={setTechnicianNote}
+              placeholder="یادداشت خود را وارد کنید..."
+              placeholderTextColor="#9CA3AF"
+              multiline
+              numberOfLines={8}
+              textAlignVertical="top"
+              style={{
+                backgroundColor: '#F9FAFB',
+                borderRadius: 12,
+                padding: 12,
+                fontSize: 14,
+                fontFamily: 'YekanBakhFaNum-Regular',
+                color: '#1F2937',
+                textAlign: 'right',
+                minHeight: 150,
+                borderWidth: 1,
+                borderColor: '#E5E7EB',
+              }}
+            />
+          </View>
+
+          <TouchableOpacity
+            onPress={handleNoteSubmit}
+            activeOpacity={0.8}
+            disabled={isSubmitting}
+            style={{
+              backgroundColor: isSubmitting ? '#9CA3AF' : '#0077B6',
+              borderRadius: 16,
+              padding: 16,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row-reverse',
+              shadowColor: '#0077B6',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+          >
+            {isSubmitting ? (
+              <>
+                <Ionicons name="hourglass-outline" size={20} color="white" style={{ marginLeft: 8 }} />
+                <Text style={{
+                  fontSize: 15,
+                  fontFamily: 'YekanBakhFaNum-Bold',
+                  color: 'white',
+                }}>
+                  در حال ثبت...
+                </Text>
+              </>
+            ) : (
+              <>
+                <Ionicons name="checkmark-circle-outline" size={20} color="white" style={{ marginLeft: 8 }} />
+                <Text style={{
+                  fontSize: 15,
+                  fontFamily: 'YekanBakhFaNum-Bold',
+                  color: 'white',
+                }}>
+                  ثبت چک لیست
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
       </>
     );
   }
@@ -1454,6 +1605,50 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                           </View>
                         )}
                       </View>
+                    </View>
+                  )}
+
+                  {/* Technician Note */}
+                  {lastService.checklist && lastService.checklist.technician_note && (
+                    <View style={{
+                      backgroundColor: 'white',
+                      borderRadius: 16,
+                      padding: 16,
+                      marginBottom: 12,
+                      borderWidth: 1,
+                      borderColor: '#F3F4F6',
+                    }}>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 12 }}>
+                        <View style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 12,
+                          backgroundColor: '#EFF6FF',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginLeft: 12,
+                        }}>
+                          <Ionicons name="document-text-outline" size={20} color="#0077B6" />
+                        </View>
+                        <Text style={{
+                          fontSize: 16,
+                          fontFamily: 'YekanBakhFaNum-Bold',
+                          color: '#1F2937',
+                          textAlign: 'right',
+                          flex: 1,
+                        }}>
+                          یادداشت سرویس کار
+                        </Text>
+                      </View>
+                      <Text style={{
+                        fontSize: 14,
+                        fontFamily: 'YekanBakhFaNum-Regular',
+                        color: '#4B5563',
+                        textAlign: 'right',
+                        lineHeight: 24,
+                      }}>
+                        {lastService.checklist.technician_note}
+                      </Text>
                     </View>
                   )}
                 </>

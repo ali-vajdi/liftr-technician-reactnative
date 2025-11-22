@@ -51,6 +51,7 @@ export interface SubmitChecklistPayload {
     name: string;
     signature: string;
   };
+  technician_note?: string | null;
 }
 
 export interface SubmitChecklistResponse {
