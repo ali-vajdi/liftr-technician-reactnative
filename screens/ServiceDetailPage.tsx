@@ -1404,7 +1404,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="contain"
+                                resizeMode="cover"
                               />
                             )}
                           </View>
@@ -1448,7 +1448,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="contain"
+                                resizeMode="cover"
                               />
                             )}
                           </View>
