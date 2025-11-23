@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, BackHandler, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -28,6 +28,7 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [activePage, setActivePage] = useState<'reports' | 'home' | 'settings'>('home');
   const [isOnDetailPage, setIsOnDetailPage] = useState(false);
+  const onDetailPageBackRef = useRef<(() => void) | null>(null);
   const [messageModal, setMessageModal] = useState<{ visible: boolean; type: 'success' | 'error'; title: string; message: string }>({
     visible: false,
     type: 'success',
@@ -214,6 +215,11 @@ function AppContent() {
         handleBack();
         return true; // Prevent default back behavior
       }
+      // On dashboard detail pages (messages, service detail), navigate back
+      if (currentScreen === 'dashboard' && isOnDetailPage && onDetailPageBackRef.current) {
+        onDetailPageBackRef.current();
+        return true; // Prevent default back behavior
+      }
       // On dashboard main pages (home, reports, settings), show confirmation dialog
       if (currentScreen === 'dashboard' && !isOnDetailPage) {
         Alert.alert(
@@ -309,6 +315,7 @@ function AppContent() {
             onNavigate={handleNavigate}
             activePage={activePage}
             onDetailPageChange={setIsOnDetailPage}
+            onDetailPageBackChange={(handler) => { onDetailPageBackRef.current = handler; }}
           />
         );
       default:

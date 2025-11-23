@@ -104,7 +104,6 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        <View style={{ flex: 1, flexDirection: 'row-reverse', alignItems: 'center', gap: 12 }}>
           <Text style={{
             fontSize: 22,
             fontFamily: 'YekanBakhFaNum-Bold',
@@ -140,25 +139,6 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
               }}>
                 خواندن همه
               </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        {onBack && (
-          <TouchableOpacity
-            onPress={onBack}
-            style={{
-              padding: 8,
-              marginLeft: 12,
-              borderRadius: 8,
-              backgroundColor: '#F3F4F6',
-              minWidth: 40,
-              minHeight: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="arrow-forward" size={24} color="#4B5563" />
           </TouchableOpacity>
         )}
       </View>

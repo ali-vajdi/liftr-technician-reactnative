@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +19,7 @@ interface DashboardScreenProps {
   onNavigate?: (page: 'reports' | 'home' | 'settings') => void;
   activePage?: 'reports' | 'home' | 'settings';
   onDetailPageChange?: (isOnDetailPage: boolean) => void;
+  onDetailPageBackChange?: (backHandler: (() => void) | null) => void;
 }
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({ 
@@ -27,6 +28,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   onNavigate,
   activePage = 'home',
   onDetailPageChange,
+  onDetailPageBackChange,
 }) => {
   const { technician: contextTechnician } = useAuth();
   const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
@@ -36,6 +38,16 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const [showMessages, setShowMessages] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
+  const backHandlerRef = useRef<(() => void) | null>(null);
+
+  // Define back handlers with useCallback
+  const handleBackFromDetail = useCallback(() => {
+    setSelectedServiceId(null);
+  }, []);
+
+  const handleBackFromMessages = useCallback(() => {
+    setShowMessages(false);
+  }, []);
 
   useEffect(() => {
     loadProfile();
@@ -55,6 +67,24 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       onDetailPageChange(!!selectedServiceId || showMessages);
     }
   }, [selectedServiceId, showMessages, onDetailPageChange]);
+
+  // Provide back handler callback to parent (separate effect to avoid render issues)
+  useEffect(() => {
+    if (!onDetailPageBackChange) return;
+
+    let newBackHandler: (() => void) | null = null;
+    if (showMessages) {
+      newBackHandler = handleBackFromMessages;
+    } else if (selectedServiceId) {
+      newBackHandler = handleBackFromDetail;
+    }
+
+    // Only update if the handler actually changed
+    if (backHandlerRef.current !== newBackHandler) {
+      backHandlerRef.current = newBackHandler;
+      onDetailPageBackChange(newBackHandler);
+    }
+  }, [selectedServiceId, showMessages, onDetailPageBackChange, handleBackFromMessages, handleBackFromDetail]);
 
   const loadProfile = async () => {
     try {
@@ -100,16 +130,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     setSelectedServiceId(serviceId);
   };
 
-  const handleBackFromDetail = () => {
-    setSelectedServiceId(null);
-  };
-
   const handleMessagesPress = () => {
     setShowMessages(true);
-  };
-
-  const handleBackFromMessages = () => {
-    setShowMessages(false);
   };
 
   const renderPage = () => {
