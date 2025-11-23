@@ -7,6 +7,7 @@ import type { ServiceDetail, ChecklistItem, LastServiceDetail } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage, type SignatureData } from './SignaturePage';
 import { toPersianDigits } from '../utils/numberUtils';
+import { SignatureImage } from '../components/ui/SignatureImage';
 
 interface SavedDescription {
   checklistId: number;
@@ -1565,17 +1566,16 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                               {lastService.checklist.manager_signature.name}
                             </Text>
                             {lastService.checklist.manager_signature.signature && (
-                              <Image
-                                source={{ uri: lastService.checklist.manager_signature.signature }}
+                              <SignatureImage
+                                signature={lastService.checklist.manager_signature.signature}
                                 style={{
-                                  width: '100%',
-                                  height: 200,
                                   borderRadius: 8,
                                   backgroundColor: 'white',
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="contain"
+                                width="100%"
+                                height={200}
                               />
                             )}
                           </View>
@@ -1609,17 +1609,16 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                               {lastService.checklist.technician_signature.name}
                             </Text>
                             {lastService.checklist.technician_signature.signature && (
-                              <Image
-                                source={{ uri: lastService.checklist.technician_signature.signature }}
+                              <SignatureImage
+                                signature={lastService.checklist.technician_signature.signature}
                                 style={{
-                                  width: '100%',
-                                  height: 200,
                                   borderRadius: 8,
                                   backgroundColor: 'white',
                                   borderWidth: 1,
                                   borderColor: '#E5E7EB',
                                 }}
-                                resizeMode="contain"
+                                width="100%"
+                                height={200}
                               />
                             )}
                           </View>
