@@ -251,7 +251,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                 flexDirection: 'row-reverse',
                 alignItems: 'center',
               }}>
-                <Ionicons name="arrow-up-outline" size={16} color="#0077B6" style={{ marginLeft: 4 }} />
                 <Text style={{
                   fontSize: 13,
                   fontFamily: 'YekanBakhFaNum-Bold',

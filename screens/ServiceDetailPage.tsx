@@ -229,7 +229,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         // On web platform, use browser confirm as Alert.alert may not work properly
         if (Platform.OS === 'web') {
           setTimeout(() => {
-            const confirmed = window.confirm('چک لیست با موفقیت ثبت شد و سرویس تکمیل گردید');
+            const confirmed = window.confirm('چک لیست با موفقیت ثبت شد');
             if (confirmed) {
               handleSuccess();
             } else {
@@ -243,8 +243,8 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
           setTimeout(() => {
             try {
               Alert.alert(
-                '',
-                'چک لیست با موفقیت ثبت شد و سرویس تکمیل گردید',
+                'تکمیل شد',
+                'چک لیست با موفقیت ثبت شد',
                 [
                   {
                     text: 'بستن',
@@ -1004,7 +1004,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               color: '#1F2937',
               textAlign: 'right',
             }}>
-            درخواست مدیر ساختمان
+            درخواست شرکت
             </Text>
           </View>
           <Text style={{
@@ -1047,7 +1047,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
               color: '#1F2937',
               textAlign: 'right',
             }}>
-              یادداشت کاربر
+            درخواست مدیر ساختمان
             </Text>
           </View>
           <Text style={{

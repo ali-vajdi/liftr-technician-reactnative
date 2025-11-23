@@ -107,10 +107,8 @@ export const ReportsPage: React.FC = () => {
             {/* Stats Grid */}
             <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8 }}>
               <StatItem label="کل" value={stats.total} color="#1F2937" />
-              <StatItem label="در انتظار" value={stats.pending} color="#F59E0B" />
               <StatItem label="اختصاص داده" value={stats.assigned} color="#3B82F6" />
               <StatItem label="تکمیل شده" value={stats.completed} color="#10B981" />
-              <StatItem label="منقضی شده" value={stats.expired} color="#EF4444" />
             </View>
           </>
         ) : (
