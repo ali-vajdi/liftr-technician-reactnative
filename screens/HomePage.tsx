@@ -225,11 +225,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                 marginBottom: 20,
                 borderWidth: 1,
                 borderColor: '#E5E7EB',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 4,
               }}>
                 {/* Date Header */}
                 <View style={{
@@ -331,11 +326,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                 padding: 18,
                                 borderWidth: 1,
                                 borderColor: '#E5E7EB',
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.08,
-                                shadowRadius: 6,
-                                elevation: 3,
                                 opacity: isPassed ? 0.85 : 1,
                               }}
                             >
@@ -422,13 +412,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                   alignItems: 'center',
                                   gap: 6,
                                 }}>
-                                  <Ionicons name="arrow-up-circle" size={14} color="#0077B6" />
                                   <Text style={{
                                     fontSize: 12,
                                     fontFamily: 'YekanBakhFaNum-Bold',
                                     color: '#0077B6',
                                   }}>
-                                    {toPersianDigits(building.elevators_count)} آسانسور
+                                    تعداد آسانسور: {toPersianDigits(building.elevators_count)}
                                   </Text>
                                 </View>
                               </View>
