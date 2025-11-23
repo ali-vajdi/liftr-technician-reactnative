@@ -699,11 +699,31 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
 
   // Default detail view
   return (
-    <ScrollView 
-      className="flex-1 bg-gray-50" 
-      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
-      showsVerticalScrollIndicator={false}
-    >
+    <>
+      <View style={{
+        backgroundColor: 'white',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+      }}>
+        <Text style={{
+          fontSize: 18,
+          fontFamily: 'YekanBakhFaNum-Bold',
+          color: '#1F2937',
+          textAlign: 'right',
+          flex: 1,
+        }}>
+          جزئیات سرویس
+        </Text>
+      </View>
+      <ScrollView 
+        className="flex-1 bg-gray-50" 
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16 }}
+        showsVerticalScrollIndicator={false}
+      >
       {/* Main Info Card - Combined Building, Address, Manager */}
       <View style={{
         backgroundColor: 'white',
@@ -1686,6 +1706,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
         </Text>
       </TouchableOpacity>
     </ScrollView>
+    </>
   );
 };
 
