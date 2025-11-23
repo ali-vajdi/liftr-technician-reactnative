@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl, Platform, Act
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getAssignedBuildings } from '../services/buildingService';
-import type { AssignedBuilding } from '../types';
+import type { AssignedBuilding, DateGroup } from '../types';
 import { toPersianDigits } from '../utils/numberUtils';
 
 interface HomePageProps {
@@ -11,7 +11,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
-  const [buildings, setBuildings] = useState<AssignedBuilding[]>([]);
+  const [buildingsData, setBuildingsData] = useState<{ [dateTitle: string]: DateGroup }>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
       setError(null);
       const response = await getAssignedBuildings();
       if (response.success && response.data) {
-        setBuildings(response.data);
+        setBuildingsData(response.data);
       }
     } catch (err: any) {
       setError(err.message || 'خطا در بارگذاری ساختمان‌ها');
@@ -132,7 +132,17 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
     );
   }
 
-  if (buildings.length === 0) {
+  // Check if there are any buildings
+  const hasBuildings = Object.keys(buildingsData).length > 0 && 
+    Object.values(buildingsData).some(dateGroup => {
+      return Object.keys(dateGroup).some(key => {
+        if (key === 'is_passed') return false;
+        const buildings = dateGroup[key] as AssignedBuilding[];
+        return Array.isArray(buildings) && buildings.length > 0;
+      });
+    });
+
+  if (!hasBuildings) {
     return (
       <View className="flex-1 bg-gray-50">
         {renderHeader()}
@@ -181,87 +191,258 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
           ) : undefined
         }
       >
+      {/* Creative Timeline-Style Buildings List */}
+      <View style={{ gap: 32 }}>
+        {Object.entries(buildingsData).map(([dateTitle, dateGroup], dateIndex) => {
+          // Get time ranges (exclude is_passed)
+          const timeRanges = Object.keys(dateGroup).filter(key => key !== 'is_passed');
+          
+          // Skip if no time ranges
+          if (timeRanges.length === 0) return null;
 
-      {/* Buildings List */}
-      <View style={{ gap: 12 }}>
-        {buildings.map((building) => (
-          <TouchableOpacity
-            key={building.id}
-            activeOpacity={0.7}
-            onPress={() => {
-              if (onBuildingPress) {
-                onBuildingPress(building.id);
-              }
-            }}
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 16,
-              padding: 16,
-              borderWidth: 1,
-              borderColor: '#F3F4F6',
-            }}
-          >
-            {/* Building Name */}
-            <Text style={{
-              fontSize: 17,
-              fontFamily: 'YekanBakhFaNum-Bold',
-              color: '#1F2937',
-              textAlign: 'right',
-              marginBottom: 8,
-            }}>
-              {building.building_name}
-            </Text>
+          const isPassed = dateGroup.is_passed;
+          const isLastDate = dateIndex === Object.keys(buildingsData).length - 1;
 
-            {/* Address */}
-            <View style={{
-              flexDirection: 'row-reverse',
-              alignItems: 'center',
-              marginBottom: 8,
-            }}>
-              <Ionicons name="location-outline" size={16} color="#9CA3AF" style={{ marginLeft: 6 }} />
-              <Text style={{
-                flex: 1,
-                fontSize: 14,
-                fontFamily: 'YekanBakhFaNum-Regular',
-                color: '#6B7280',
-                textAlign: 'right',
-              }}>
-                {building.building_address}
-              </Text>
-            </View>
+          return (
+            <View key={dateTitle} style={{ position: 'relative' }}>
+              {/* Timeline Line */}
+              {!isLastDate && (
+                <View style={{
+                  position: 'absolute',
+                  right: 15,
+                  top: 0,
+                  bottom: -32,
+                  width: 2,
+                  backgroundColor: '#E5E7EB',
+                }} />
+              )}
 
-            {/* Footer Info */}
-            <View style={{
-              flexDirection: 'row-reverse',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingTop: 12,
-              borderTopWidth: 1,
-              borderTopColor: '#F3F4F6',
-            }}>
-              <Text style={{
-                fontSize: 12,
-                fontFamily: 'YekanBakhFaNum-Regular',
-                color: '#9CA3AF',
-                textAlign: 'right',
-              }}>
-                {toPersianDigits(building.assigned_at_jalali)}
-              </Text>
+              {/* Date Card */}
               <View style={{
-                flexDirection: 'row-reverse',
-                alignItems: 'center',
+                backgroundColor: 'white',
+                borderRadius: 20,
+                padding: 20,
+                marginBottom: 20,
+                borderWidth: 1,
+                borderColor: '#E5E7EB',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 4,
               }}>
-                <Text style={{
-                  fontSize: 13,
-                  fontFamily: 'YekanBakhFaNum-Bold',
-                  color: '#0077B6',
+                {/* Date Header */}
+                <View style={{
+                  flexDirection: 'row-reverse',
+                  alignItems: 'flex-start',
+                  marginBottom: 16,
                 }}>
-                  تعداد آسانسور: {toPersianDigits(building.elevators_count)}
-                </Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 22,
+                      fontFamily: 'YekanBakhFaNum-Bold',
+                      color: '#1F2937',
+                      textAlign: 'right',
+                      marginBottom: 4,
+                    }}>
+                      {dateTitle}
+                    </Text>
+                    {isPassed && (
+                      <View style={{
+                        flexDirection: 'row-reverse',
+                        alignItems: 'center',
+                        gap: 4,
+                        marginTop: 4,
+                      }}>
+                        <Ionicons name="alert-circle" size={14} color="#DC2626" />
+                        <Text style={{
+                          fontSize: 12,
+                          fontFamily: 'YekanBakhFaNum-Bold',
+                          color: '#DC2626',
+                        }}>
+                          تاریخ مجاز مراجعه به اتمام رسیده است
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+
+                {/* Time Ranges and Buildings */}
+                <View style={{ gap: 20 }}>
+                  {timeRanges.map((timeRange, timeIndex) => {
+                    const buildings = dateGroup[timeRange] as AssignedBuilding[];
+                    if (!Array.isArray(buildings) || buildings.length === 0) return null;
+
+                    return (
+                      <View key={timeRange} style={{ gap: 12 }}>
+                        {/* Time Range Badge */}
+                        <View style={{
+                          flexDirection: 'row-reverse',
+                          alignItems: 'center',
+                          gap: 8,
+                          marginBottom: 8,
+                        }}>
+                          <View style={{
+                            flexDirection: 'row-reverse',
+                            alignItems: 'center',
+                            gap: 6,
+                          }}>
+                            <Ionicons 
+                              name="time" 
+                              size={16} 
+                              color="#6B7280" 
+                            />
+                            <Text style={{
+                              fontSize: 18,
+                              fontFamily: 'YekanBakhFaNum-Bold',
+                              color: '#1F2937',
+                            }}>
+                              {toPersianDigits(timeRange)}
+                            </Text>
+                          </View>
+                          <View style={{
+                            flex: 1,
+                            height: 1,
+                            backgroundColor: '#E5E7EB',
+                          }} />
+                          <Text style={{
+                            fontSize: 12,
+                            fontFamily: 'YekanBakhFaNum-Regular',
+                            color: '#6B7280',
+                          }}>
+                            {toPersianDigits(buildings.length)} ساختمان
+                          </Text>
+                        </View>
+
+                        {/* Buildings Grid */}
+                        <View style={{ gap: 12 }}>
+                          {buildings.map((building, buildingIndex) => (
+                            <TouchableOpacity
+                              key={building.id}
+                              activeOpacity={0.8}
+                              onPress={() => {
+                                if (onBuildingPress) {
+                                  onBuildingPress(building.id);
+                                }
+                              }}
+                              style={{
+                                backgroundColor: 'white',
+                                borderRadius: 16,
+                                padding: 18,
+                                borderWidth: 1,
+                                borderColor: '#E5E7EB',
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.08,
+                                shadowRadius: 6,
+                                elevation: 3,
+                                opacity: isPassed ? 0.85 : 1,
+                              }}
+                            >
+                              {/* Building Header */}
+                              <View style={{
+                                flexDirection: 'row-reverse',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                marginBottom: 12,
+                              }}>
+                                <View style={{ flex: 1, marginLeft: 12 }}>
+                                  <Text style={{
+                                    fontSize: 18,
+                                    fontFamily: 'YekanBakhFaNum-Bold',
+                                    color: '#1F2937',
+                                    textAlign: 'right',
+                                    marginBottom: 6,
+                                  }}>
+                                    {building.building_name}
+                                  </Text>
+                                  <View style={{
+                                    flexDirection: 'row-reverse',
+                                    alignItems: 'center',
+                                    gap: 6,
+                                  }}>
+                                    <Ionicons name="location" size={14} color="#EF4444" />
+                                    <Text style={{
+                                      flex: 1,
+                                      fontSize: 13,
+                                      fontFamily: 'YekanBakhFaNum-Regular',
+                                      color: '#6B7280',
+                                      textAlign: 'right',
+                                    }}>
+                                      {building.building_address}
+                                    </Text>
+                                  </View>
+                                </View>
+                                <View style={{
+                                  width: 40,
+                                  height: 40,
+                                  borderRadius: 20,
+                                  backgroundColor: '#F3F4F6',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                  <Ionicons 
+                                    name="business" 
+                                    size={20} 
+                                    color="#6B7280" 
+                                  />
+                                </View>
+                              </View>
+
+                              {/* Building Info Footer */}
+                              <View style={{
+                                flexDirection: 'row-reverse',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingTop: 14,
+                                borderTopWidth: 1,
+                                borderTopColor: '#F3F4F6',
+                                marginTop: 8,
+                              }}>
+                                <View style={{
+                                  flexDirection: 'row-reverse',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                }}>
+                                  <Ionicons name="calendar-outline" size={14} color="#9CA3AF" />
+                                  <Text style={{
+                                    fontSize: 11,
+                                    fontFamily: 'YekanBakhFaNum-Regular',
+                                    color: '#9CA3AF',
+                                  }}>
+                                    {toPersianDigits(building.assigned_at_jalali)}
+                                  </Text>
+                                </View>
+                                <View style={{
+                                  backgroundColor: '#EFF6FF',
+                                  paddingHorizontal: 10,
+                                  paddingVertical: 6,
+                                  borderRadius: 8,
+                                  flexDirection: 'row-reverse',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                }}>
+                                  <Ionicons name="arrow-up-circle" size={14} color="#0077B6" />
+                                  <Text style={{
+                                    fontSize: 12,
+                                    fontFamily: 'YekanBakhFaNum-Bold',
+                                    color: '#0077B6',
+                                  }}>
+                                    {toPersianDigits(building.elevators_count)} آسانسور
+                                  </Text>
+                                </View>
+                              </View>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        ))}
+          );
+        })}
       </View>
     </ScrollView>
     </View>

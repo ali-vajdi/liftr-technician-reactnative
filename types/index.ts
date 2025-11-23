@@ -65,11 +65,20 @@ export interface AssignedBuilding {
   building_name: string;
   building_address: string;
   elevators_count: number;
+  visit_date: string;
+  visit_time_range: string;
+}
+
+export interface DateGroup {
+  is_passed: boolean;
+  [timeRange: string]: boolean | AssignedBuilding[];
 }
 
 export interface AssignedBuildingsResponse {
   success: boolean;
-  data: AssignedBuilding[];
+  data: {
+    [dateTitle: string]: DateGroup;
+  };
 }
 
 export interface Elevator {
