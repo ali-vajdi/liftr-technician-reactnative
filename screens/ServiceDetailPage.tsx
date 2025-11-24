@@ -6,7 +6,6 @@ import { getServiceDetail, submitChecklist, type SubmitChecklistPayload } from '
 import type { ServiceDetail, ChecklistItem, LastServiceDetail } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage, type SignatureData } from './SignaturePage';
-import { toPersianDigits } from '../utils/numberUtils';
 import { SignatureImage } from '../components/ui/SignatureImage';
 
 interface SavedDescription {
@@ -762,7 +761,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                 color: '#6B7280',
                 textAlign: 'right',
               }}>
-                {toPersianDigits(serviceDetail.service_date_text)}
+                {serviceDetail.service_date_text}
               </Text>
             </View>
           </View>
@@ -969,7 +968,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {toPersianDigits(elevator.stops_count)}
+                    {elevator.stops_count}
                   </Text>
                 </View>
                 <View style={{ flex: 1 }}>
@@ -988,7 +987,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {toPersianDigits(elevator.capacity)} نفر
+                    {elevator.capacity} نفر
                   </Text>
                 </View>
               </View>
@@ -1139,7 +1138,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
               <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
               <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-                {toPersianDigits(lastService.service_date_text)}
+                {lastService.service_date_text}
               </Text>
             </View>
 
@@ -1147,7 +1146,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
             <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
               <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
               <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-                اختصاص داده شده: {toPersianDigits(lastService.assigned_at_jalali)}
+                اختصاص داده شده: {lastService.assigned_at_jalali}
               </Text>
             </View>
 
@@ -1347,13 +1346,13 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                       <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                         <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
                         <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-                          {toPersianDigits(lastService.service_date_text)}
+                          {lastService.service_date_text}
                         </Text>
                       </View>
                       <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                         <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 8 }} />
                         <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-                          اختصاص داده شده: {toPersianDigits(lastService.assigned_at_jalali)}
+                          اختصاص داده شده: {lastService.assigned_at_jalali}
                         </Text>
                       </View>
                       {lastService.completed_at_jalali && (

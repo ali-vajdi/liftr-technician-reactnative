@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { formatPersianPhoneNumber, toPersianDigits } from '../utils/numberUtils';
 
 interface VerificationScreenProps {
   phoneNumber: string;
@@ -37,7 +36,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${toPersianDigits(mins)}:${toPersianDigits(secs.toString().padStart(2, '0'))}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleCodeChange = (value: string, index: number) => {
@@ -123,7 +122,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
                 کد تأیید به شماره زیر ارسال شد:
               </Text>
               <Text className="text-honolulu-blue text-lg font-yekan-bold text-center">
-                {formatPersianPhoneNumber(phoneNumber)}
+                {phoneNumber}
               </Text>
             </View>
 
@@ -140,14 +139,10 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
                     ref={(ref) => {
                       if (ref) inputRefs.current[index] = ref;
                     }}
-                    value={toPersianDigits(digit)}
+                    value={digit}
                     onChangeText={(value) => {
-                      // Convert Persian to English for internal storage
-                      const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-                      const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                      const digitIndex = persianDigits.indexOf(value);
-                      const englishValue = digitIndex !== -1 ? englishDigits[digitIndex] : value.replace(/[^0-9]/g, '');
-                      handleCodeChange(englishValue, index);
+                      const cleanedValue = value.replace(/[^0-9]/g, '');
+                      handleCodeChange(cleanedValue, index);
                     }}
                     onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
                     keyboardType="number-pad"

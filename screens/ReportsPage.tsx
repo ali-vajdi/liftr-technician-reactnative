@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getReports } from '../services/buildingService';
 import type { ReportsResponse, ReportStats, LastService } from '../types';
-import { toPersianDigits, formatPersianNumber } from '../utils/numberUtils';
 
 export const ReportsPage: React.FC = () => {
   const [reports, setReports] = useState<ReportsResponse | null>(null);
@@ -99,7 +98,7 @@ export const ReportsPage: React.FC = () => {
                   نرخ تکمیل
                 </Text>
                 <Text style={{ fontSize: 18, fontFamily: 'YekanBakhFaNum-Bold', color: '#0077B6', textAlign: 'left' }}>
-                  {formatPersianNumber(stats.completion_rate, { decimals: 1 })}%
+                  {stats.completion_rate.toFixed(1)}%
                 </Text>
               </View>
             </View>
@@ -116,7 +115,7 @@ export const ReportsPage: React.FC = () => {
           <View style={{ flexDirection: 'row-reverse', gap: 12 }}>
             <View style={{ flex: 1, backgroundColor: '#F9FAFB', borderRadius: 12, padding: 16, alignItems: 'center' }}>
               <Text style={{ fontSize: 24, fontFamily: 'YekanBakhFaNum-Bold', color: '#1F2937', marginBottom: 6 }}>
-                {toPersianDigits(stats.total)}
+                {stats.total}
               </Text>
               <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
                 کل
@@ -124,7 +123,7 @@ export const ReportsPage: React.FC = () => {
             </View>
             <View style={{ flex: 1, backgroundColor: '#ECFDF5', borderRadius: 12, padding: 16, alignItems: 'center' }}>
               <Text style={{ fontSize: 24, fontFamily: 'YekanBakhFaNum-Bold', color: '#10B981', marginBottom: 6 }}>
-                {toPersianDigits(stats.completed)}
+                {stats.completed}
               </Text>
               <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
                 تکمیل شده
@@ -149,7 +148,7 @@ export const ReportsPage: React.FC = () => {
         }}
       >
         <Text style={{ fontSize: 20, fontFamily: 'YekanBakhFaNum-Bold', color, marginBottom: 4 }}>
-          {toPersianDigits(value)}
+          {value}
         </Text>
         <Text style={{ fontSize: 11, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
           {label}
@@ -269,7 +268,7 @@ export const ReportsPage: React.FC = () => {
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 8 }}>
           <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 6 }} />
           <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-            {monthNames[service.service_month - 1]} {toPersianDigits(service.service_year)}
+            {monthNames[service.service_month - 1]} {service.service_year}
           </Text>
         </View>
 
@@ -277,7 +276,7 @@ export const ReportsPage: React.FC = () => {
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: service.completed_at ? 8 : 0 }}>
           <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 6 }} />
           <Text style={{ fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', color: '#9CA3AF', textAlign: 'right' }}>
-            اختصاص داده شده: {toPersianDigits(service.assigned_at)}
+            اختصاص داده شده: {service.assigned_at}
           </Text>
         </View>
 
@@ -286,7 +285,7 @@ export const ReportsPage: React.FC = () => {
           <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
             <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 6 }} />
             <Text style={{ fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', color: '#10B981', textAlign: 'right' }}>
-              تکمیل شده: {toPersianDigits(service.completed_at)}
+              تکمیل شده: {service.completed_at}
             </Text>
           </View>
         )}

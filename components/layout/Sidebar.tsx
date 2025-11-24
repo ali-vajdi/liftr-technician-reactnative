@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import type { Technician } from '../../types';
-import { formatPersianPhoneNumber, toPersianDigits } from '../../utils/numberUtils';
 
 interface SidebarProps {
   visible: boolean;
@@ -152,7 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   fontFamily: 'YekanBakhFaNum-Regular', 
                   textAlign: 'right'
                 }}>
-                  {formatPersianPhoneNumber(phoneNumber)}
+                  {phoneNumber}
                 </Text>
               </View>
 
@@ -209,7 +208,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         fontFamily: 'YekanBakhFaNum-Bold',
                         textAlign: 'right'
                       }}>
-                        {toPersianDigits(technician.national_id)}
+                        {technician.national_id}
                       </Text>
                       <Text style={{ 
                         color: '#9CA3AF',
@@ -252,7 +251,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       fontFamily: 'YekanBakhFaNum-Bold',
                       textAlign: 'right'
                     }}>
-                      #{technician?.id ? toPersianDigits(technician.id) : '---'}
+                      #{technician?.id ? technician.id : '---'}
                     </Text>
                     <Text style={{ 
                       color: '#9CA3AF',

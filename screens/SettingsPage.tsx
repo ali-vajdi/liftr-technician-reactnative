@@ -3,7 +3,6 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { Technician } from '../types';
-import { formatPersianPhoneNumber, toPersianDigits } from '../utils/numberUtils';
 
 interface SettingsPageProps {
   technician: Technician | null;
@@ -137,7 +136,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 : 'کاربر لیفتر'}
             </Text>
             <Text style={{ color: '#6B7280', fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', textAlign: 'right' }}>
-              {formatPersianPhoneNumber(phoneNumber)}
+              {phoneNumber}
             </Text>
           </View>
         </View>
@@ -172,11 +171,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             />
           )}
           <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
-          <InfoRow label="شماره تماس" value={formatPersianPhoneNumber(phoneNumber)} icon="call-outline" />
+          <InfoRow label="شماره تماس" value={phoneNumber} icon="call-outline" />
           {technician?.national_id && (
             <>
               <View style={{ height: 1, backgroundColor: '#F3F4F6', marginVertical: 4 }} />
-              <InfoRow label="کد ملی" value={toPersianDigits(technician.national_id)} icon="id-card-outline" />
+              <InfoRow label="کد ملی" value={technician.national_id} icon="id-card-outline" />
             </>
           )}
           {(technician?.organization_name || technician?.organization) && (

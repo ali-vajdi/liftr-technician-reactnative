@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import messageService from '../services/messageService';
 import type { Message } from '../types';
-import { toPersianDigits } from '../utils/numberUtils';
 
 interface MessagesPageProps {
   onBack?: () => void;
@@ -292,7 +291,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                     color: '#9CA3AF',
                     textAlign: 'right',
                   }}>
-                    {toPersianDigits(message.created_at_jalali)}
+                    {message.created_at_jalali}
                   </Text>
                 </View>
                 {!message.is_read && (
@@ -360,7 +359,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                     color: '#10B981',
                     textAlign: 'right',
                   }}>
-                    خوانده شده در {toPersianDigits(message.read_at_jalali)}
+                    خوانده شده در {message.read_at_jalali}
                   </Text>
                 </View>
               )}

@@ -12,19 +12,7 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": [
-      [
-        "react-native-bootsplash",
-        {
-          "logoPath": "./assets/icon.png",
-          "backgroundColor": "#359cd7",
-          "dark": {
-            "logoPath": "./assets/icon.png",
-            "backgroundColor": "#359cd7"
-          }
-        }
-      ]
-    ],
+    "plugins": [],
     "orientation": "portrait",
     "icon": "./assets/icon.jpg",
     "userInterfaceStyle": "light",
