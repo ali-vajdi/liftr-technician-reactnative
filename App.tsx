@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import Constants from 'expo-constants';
+import RNBootSplash from 'react-native-bootsplash';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { PasswordScreen } from './screens/PasswordScreen';
@@ -508,6 +509,13 @@ export default function App() {
     
     loadFonts();
   }, []);
+
+  useEffect(() => {
+    // Hide the boot splash screen once fonts are loaded
+    if (fontsLoaded) {
+      RNBootSplash.hide({ fade: true });
+    }
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null; // Or a loading screen
