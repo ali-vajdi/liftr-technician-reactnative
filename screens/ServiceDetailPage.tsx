@@ -7,6 +7,7 @@ import type { ServiceDetail, ChecklistItem, LastServiceDetail } from '../types';
 import { ChecklistPage } from './ChecklistPage';
 import { SignaturePage, type SignatureData } from './SignaturePage';
 import { SignatureImage } from '../components/ui/SignatureImage';
+import { toPersianDigits } from '../utils/numberUtils';
 
 interface SavedDescription {
   checklistId: number;
@@ -391,7 +392,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
     const elevatorNumber = currentElevatorIndex + 1;
     const totalElevators = elevators.length;
     const headerTitle = totalElevators > 1 
-      ? `چک لیست - آسانسور ${elevatorNumber} از ${totalElevators}`
+      ? `چک لیست - آسانسور ${toPersianDigits(elevatorNumber)} از ${toPersianDigits(totalElevators)}`
       : 'چک لیست';
     
     return (
@@ -968,7 +969,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {elevator.stops_count}
+                    {toPersianDigits(elevator.stops_count)}
                   </Text>
                 </View>
                 <View style={{ flex: 1 }}>
@@ -987,7 +988,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                     color: '#1F2937',
                     textAlign: 'right',
                   }}>
-                    {elevator.capacity} نفر
+                    {toPersianDigits(elevator.capacity)} نفر
                   </Text>
                 </View>
               </View>
@@ -1205,7 +1206,7 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ serviceId,
                               textAlign: 'right',
                               marginTop: 4,
                             }}>
-                              {elevatorChecklist.descriptions.length} مورد توضیحات
+                              {toPersianDigits(elevatorChecklist.descriptions.length)} مورد توضیحات
                             </Text>
                           )}
                         </View>
