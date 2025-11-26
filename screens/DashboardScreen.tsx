@@ -61,6 +61,14 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     }
   }, [showMessages]);
 
+  // Reload unread count whenever any dashboard page loads
+  useEffect(() => {
+    // Only reload if we're not on a detail page or messages page
+    if (!selectedServiceId && !showMessages) {
+      loadMessagesCount();
+    }
+  }, [activePage, selectedServiceId]);
+
   // Notify parent when detail page state changes
   useEffect(() => {
     if (onDetailPageChange) {
