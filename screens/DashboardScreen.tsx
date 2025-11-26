@@ -39,6 +39,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
   const backHandlerRef = useRef<(() => void) | null>(null);
+  const isInitialMount = useRef(true);
+  const prevShowMessages = useRef(showMessages);
+  const prevActivePage = useRef(activePage);
+  const prevSelectedServiceId = useRef(selectedServiceId);
 
   // Define back handlers with useCallback
   const handleBackFromDetail = useCallback(() => {
@@ -49,25 +53,50 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     setShowMessages(false);
   }, []);
 
+  // Initial load on mount
   useEffect(() => {
     loadProfile();
     loadMessagesCount();
+    isInitialMount.current = false;
   }, []);
 
-  // Refresh unread count when returning from messages page
+  // Refresh unread count when returning from messages page (only when showMessages changes from true to false)
   useEffect(() => {
-    if (!showMessages) {
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      prevShowMessages.current = showMessages;
+      return;
+    }
+    
+    // Only reload if we're returning from messages page (was true, now false)
+    if (prevShowMessages.current === true && showMessages === false) {
       loadMessagesCount();
     }
+    prevShowMessages.current = showMessages;
   }, [showMessages]);
 
-  // Reload unread count whenever any dashboard page loads
+  // Reload unread count whenever any dashboard page loads (only when activePage or selectedServiceId actually changes)
   useEffect(() => {
-    // Only reload if we're not on a detail page or messages page
-    if (!selectedServiceId && !showMessages) {
-      loadMessagesCount();
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      prevActivePage.current = activePage;
+      prevSelectedServiceId.current = selectedServiceId;
+      return;
     }
-  }, [activePage, selectedServiceId]);
+    
+    // Only reload if we're not on a detail page or messages page and something actually changed
+    if (!selectedServiceId && !showMessages) {
+      const activePageChanged = prevActivePage.current !== activePage;
+      const selectedServiceIdChanged = prevSelectedServiceId.current !== selectedServiceId;
+      
+      if (activePageChanged || selectedServiceIdChanged) {
+        loadMessagesCount();
+      }
+    }
+    
+    prevActivePage.current = activePage;
+    prevSelectedServiceId.current = selectedServiceId;
+  }, [activePage, selectedServiceId, showMessages]);
 
   // Notify parent when detail page state changes
   useEffect(() => {
@@ -100,7 +129,12 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       const profile = await authService.getProfile();
       setTechnician(profile);
     } catch (error: any) {
-      // Silently handle profile load errors
+      // If technician status is disabled, logout automatically
+      if (error.message === 'TECHNICIAN_STATUS_DISABLED') {
+        onLogout();
+        return;
+      }
+      // Silently handle other profile load errors
     } finally {
       setLoading(false);
     }

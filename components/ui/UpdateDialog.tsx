@@ -19,10 +19,9 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
   onClose,
 }) => {
   const handleUpdate = () => {
-    // Open Play Store for Android
-    Linking.openURL('market://details?id=com.liftrir.technicianapp').catch(() => {
-      // Fallback to web Play Store
-      Linking.openURL('https://play.google.com/store/apps/details?id=com.liftrir.technicianapp');
+    // Navigate to liftr.ir
+    Linking.openURL('https://liftr.ir').catch((err) => {
+      console.error('Failed to open URL:', err);
     });
   };
 

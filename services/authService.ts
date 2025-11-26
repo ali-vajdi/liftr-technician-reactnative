@@ -94,6 +94,13 @@ class AuthService {
       const response = await apiClient.get(API_ENDPOINTS.TECHNICIAN.PROFILE);
       const profileData = response.data.data;
       
+      // Check if technician status is false - if so, logout
+      if (profileData.status === false) {
+        // Clear auth data and throw error to trigger logout
+        await this.clearAuthData();
+        throw new Error('TECHNICIAN_STATUS_DISABLED');
+      }
+      
       // Transform to Technician interface
       const technician: Technician = {
         id: profileData.id,
@@ -105,7 +112,7 @@ class AuthService {
         organization_id: profileData.organization_id,
         organization_name: profileData.organization_name,
         organization: profileData.organization,
-        status: true,
+        status: profileData.status ?? true,
         has_credentials: true,
       };
       
@@ -114,6 +121,10 @@ class AuthService {
       
       return technician;
     } catch (error: any) {
+      // Re-throw the status disabled error as-is
+      if (error.message === 'TECHNICIAN_STATUS_DISABLED') {
+        throw error;
+      }
       throw this.handleError(error);
     }
   }

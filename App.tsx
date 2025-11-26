@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, BackHandler, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Modal, BackHandler, Platform, AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 import Constants from 'expo-constants';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { LoginScreen } from './screens/LoginScreen';
@@ -13,22 +14,30 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoadingProvider, useLoading } from './context/LoadingContext';
 import { LoadingModal } from './components/ui/LoadingModal';
 import { UpdateDialog } from './components/ui/UpdateDialog';
-import { setLoadingCallback } from './services/api';
+import { SplashScreen as CustomSplashScreen } from './components/SplashScreen';
+import { setLoadingCallback, setForceUpdateActive, setUpdateCheckComplete } from './services/api';
 import authService, { type CheckUpdateResponse } from './services/authService';
 import { fonts } from './fonts.config';
 import './global.css';
 
-type AppState = 'welcome' | 'login' | 'password' | 'verification' | 'dashboard';
+// Prevent the default splash screen from auto-hiding
+if (Platform.OS !== 'web') {
+  SplashScreen.preventAutoHideAsync();
+}
+
+type ScreenState = 'welcome' | 'login' | 'password' | 'verification' | 'dashboard';
 
 function AppContent() {
   const { isAuthenticated, technician, isLoading: authLoading, login, sendOtp, verifyOtp, logout } = useAuth();
   const { isLoading: apiLoading, showLoading, hideLoading, loadingMessage } = useLoading();
-  const [currentScreen, setCurrentScreen] = useState<AppState>('welcome');
+  const [currentScreen, setCurrentScreen] = useState<ScreenState>('welcome');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activePage, setActivePage] = useState<'reports' | 'home' | 'settings'>('home');
   const [isOnDetailPage, setIsOnDetailPage] = useState(false);
   const onDetailPageBackRef = useRef<(() => void) | null>(null);
+  const shouldExitAppRef = useRef(false);
+  const appState = useRef(AppState.currentState);
   const [messageModal, setMessageModal] = useState<{ visible: boolean; type: 'success' | 'error'; title: string; message: string }>({
     visible: false,
     type: 'success',
@@ -42,6 +51,7 @@ function AppContent() {
     latestVersion: string;
     currentVersion: string;
   } | null>(null);
+  const [isUpdateCheckComplete, setIsUpdateCheckComplete] = useState(false);
 
   // Connect axios loading callback
   useEffect(() => {
@@ -59,6 +69,8 @@ function AppContent() {
     const checkForUpdates = async () => {
       // Only check updates for Android
       if (Platform.OS !== 'android') {
+        setIsUpdateCheckComplete(true);
+        setUpdateCheckComplete(true);
         return;
       }
 
@@ -69,17 +81,24 @@ function AppContent() {
         const response: CheckUpdateResponse = await authService.checkUpdate('android', appVersion);
         
         if (response.success && response.has_update) {
+          const isForceUpdate = response.force_update;
           setUpdateInfo({
             visible: true,
-            forceUpdate: response.force_update,
+            forceUpdate: isForceUpdate,
             description: response.description,
             latestVersion: response.latest_version,
             currentVersion: response.current_version,
           });
+          // Block all API calls if force update is required
+          setForceUpdateActive(isForceUpdate);
         }
       } catch (error) {
         // Silently handle update check errors - don't block app if check fails
         console.error('Failed to check for updates:', error);
+      } finally {
+        // Mark update check as complete regardless of success/failure
+        setIsUpdateCheckComplete(true);
+        setUpdateCheckComplete(true);
       }
     };
 
@@ -97,6 +116,47 @@ function AppContent() {
       setCurrentScreen('dashboard');
     }
   }, [isAuthenticated, technician]);
+
+  // Handle app state changes (background/foreground) for Android
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      // When app comes back to foreground from background
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        // Don't reset navigation if force update is active
+        if (updateInfo?.visible && updateInfo.forceUpdate) {
+          // Ensure force update blocking is still active
+          setForceUpdateActive(true);
+          appState.current = nextAppState;
+          return;
+        }
+
+        // Reset navigation state when app comes back from background
+        // If authenticated, go to dashboard home (not detail pages)
+        if (isAuthenticated && technician) {
+          setCurrentScreen('dashboard');
+          setActivePage('home');
+          setIsOnDetailPage(false);
+        } else {
+          // If not authenticated, go to welcome screen
+          setCurrentScreen('welcome');
+          setPhoneNumber('');
+        }
+      }
+
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isAuthenticated, technician, updateInfo]);
 
   const handleGetStarted = () => {
     setCurrentScreen('login');
@@ -210,8 +270,49 @@ function AppContent() {
     }
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // If we're in the process of exiting, allow default behavior
+      if (shouldExitAppRef.current) {
+        return false;
+      }
+      
+      // Hide loading modal if visible to prevent blocking Alert
+      if (apiLoading) {
+        hideLoading();
+      }
+      
       // Handle back navigation for login flow screens
-      if (currentScreen === 'login' || currentScreen === 'password' || currentScreen === 'verification') {
+      if (currentScreen === 'login') {
+        // On login screen, show exit confirmation
+        // Use setTimeout to ensure any modals are dismissed first
+        setTimeout(() => {
+          Alert.alert(
+            'خروج از برنامه',
+            'آیا می‌خواهید برنامه را ببندید؟',
+            [
+              {
+                text: 'خیر',
+                style: 'cancel',
+                onPress: () => {}, // Do nothing, stay in app
+              },
+              {
+                text: 'بله',
+                style: 'destructive',
+                onPress: () => {
+                  // Set flag to allow exit
+                  shouldExitAppRef.current = true;
+                  // Dismiss alert and exit app
+                  setTimeout(() => {
+                    BackHandler.exitApp();
+                  }, 100);
+                },
+              },
+            ],
+            { cancelable: true }
+          );
+        }, 150);
+        return true; // Prevent default back behavior
+      }
+      if (currentScreen === 'password' || currentScreen === 'verification') {
         handleBack();
         return true; // Prevent default back behavior
       }
@@ -222,48 +323,64 @@ function AppContent() {
       }
       // On dashboard main pages (home, reports, settings), show confirmation dialog
       if (currentScreen === 'dashboard' && !isOnDetailPage) {
-        Alert.alert(
-          'خروج از برنامه',
-          'آیا می‌خواهید برنامه را ببندید؟',
-          [
-            {
-              text: 'خیر',
-              style: 'cancel',
-              onPress: () => {}, // Do nothing, stay in app
-            },
-            {
-              text: 'بله',
-              style: 'destructive',
-              onPress: () => {
-                BackHandler.exitApp();
+        // Use setTimeout to ensure any modals are dismissed first
+        setTimeout(() => {
+          Alert.alert(
+            'خروج از برنامه',
+            'آیا می‌خواهید برنامه را ببندید؟',
+            [
+              {
+                text: 'خیر',
+                style: 'cancel',
+                onPress: () => {}, // Do nothing, stay in app
               },
-            },
-          ],
-          { cancelable: true }
-        );
+              {
+                text: 'بله',
+                style: 'destructive',
+                onPress: () => {
+                  // Set flag to allow exit
+                  shouldExitAppRef.current = true;
+                  // Dismiss alert and exit app
+                  setTimeout(() => {
+                    BackHandler.exitApp();
+                  }, 100);
+                },
+              },
+            ],
+            { cancelable: true }
+          );
+        }, 150);
         return true; // Prevent default back behavior
       }
       // On welcome screen, show confirmation dialog before exiting
       if (currentScreen === 'welcome') {
-        Alert.alert(
-          'خروج از برنامه',
-          'آیا می‌خواهید برنامه را ببندید؟',
-          [
-            {
-              text: 'خیر',
-              style: 'cancel',
-              onPress: () => {}, // Do nothing, stay in app
-            },
-            {
-              text: 'بله',
-              style: 'destructive',
-              onPress: () => {
-                BackHandler.exitApp();
+        // Use setTimeout to ensure any modals are dismissed first
+        setTimeout(() => {
+          Alert.alert(
+            'خروج از برنامه',
+            'آیا می‌خواهید برنامه را ببندید؟',
+            [
+              {
+                text: 'خیر',
+                style: 'cancel',
+                onPress: () => {}, // Do nothing, stay in app
               },
-            },
-          ],
-          { cancelable: true }
-        );
+              {
+                text: 'بله',
+                style: 'destructive',
+                onPress: () => {
+                  // Set flag to allow exit
+                  shouldExitAppRef.current = true;
+                  // Dismiss alert and exit app
+                  setTimeout(() => {
+                    BackHandler.exitApp();
+                  }, 100);
+                },
+              },
+            ],
+            { cancelable: true }
+          );
+        }, 150);
         return true; // Prevent default back behavior
       }
       return false;
@@ -374,7 +491,13 @@ function AppContent() {
             description={updateInfo.description}
             latestVersion={updateInfo.latestVersion}
             currentVersion={updateInfo.currentVersion}
-            onClose={() => setUpdateInfo({ ...updateInfo, visible: false })}
+            onClose={() => {
+              // Only allow closing if it's not a force update
+              if (!updateInfo.forceUpdate) {
+                setUpdateInfo({ ...updateInfo, visible: false });
+                setForceUpdateActive(false);
+              }
+            }}
           />
         )}
 
@@ -494,23 +617,76 @@ function AppContent() {
 }
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    async function loadFonts() {
+    async function prepare() {
+      const startTime = Date.now();
+      const MIN_SPLASH_DURATION = 2000; // Minimum 2 seconds
+      
       try {
+        // Small delay to ensure React Native is fully initialized
+        // This allows our custom splash screen to render first
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Wait a bit more for custom splash to fully render
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Hide the default native splash screen on Android/iOS
+        // This reveals our custom splash screen component underneath
+        if (Platform.OS !== 'web') {
+          try {
+            await SplashScreen.hideAsync();
+          } catch (error) {
+            console.warn('Error hiding splash screen:', error);
+          }
+        }
+        
+        // Load fonts
         await Font.loadAsync(fonts);
-        setFontsLoaded(true);
+        
+        // Calculate elapsed time and ensure minimum 2 seconds
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_SPLASH_DURATION - elapsedTime);
+        
+        if (remainingTime > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingTime));
+        }
+        
+        setAppIsReady(true);
       } catch (error) {
-        setFontsLoaded(true); // Continue even if fonts fail to load
+        console.warn('Error during app initialization:', error);
+        
+        // Ensure minimum 2 seconds even on error
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_SPLASH_DURATION - elapsedTime);
+        
+        if (remainingTime > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingTime));
+        }
+        
+        // Continue even if initialization fails
+        if (Platform.OS !== 'web') {
+          try {
+            await SplashScreen.hideAsync();
+          } catch (error) {
+            console.warn('Error hiding splash screen:', error);
+          }
+        }
+        setAppIsReady(true);
       }
     }
     
-    loadFonts();
+    prepare();
   }, []);
 
-  if (!fontsLoaded) {
-    return null; // Or a loading screen
+  // Show custom splash screen while app is loading
+  if (!appIsReady) {
+    return (
+      <SafeAreaProvider>
+        <CustomSplashScreen visible={true} />
+      </SafeAreaProvider>
+    );
   }
 
   return (

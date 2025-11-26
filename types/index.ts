@@ -36,6 +36,7 @@ export interface ProfileResponse {
     national_id: string;
     organization_id: number;
     organization_name: string | null;
+    status: boolean;
     organization: {
       id: number;
       name: string;
