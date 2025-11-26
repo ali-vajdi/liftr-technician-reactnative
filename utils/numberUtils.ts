@@ -88,3 +88,37 @@ export const formatPersianPhoneNumber = (phoneNumber: string): string => {
   return toPersianDigits(phoneNumber);
 };
 
+/**
+ * Converts Persian/Arabic numerals to English numerals
+ * @param value - The string with Persian/Arabic numerals
+ * @returns String with English numerals
+ */
+export const toEnglishDigits = (value: string): string => {
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  
+  if (value === null || value === undefined) {
+    return '';
+  }
+  
+  const stringValue = String(value);
+  let result = '';
+  
+  for (let i = 0; i < stringValue.length; i++) {
+    const char = stringValue[i];
+    const persianIndex = persianDigits.indexOf(char);
+    const arabicIndex = arabicDigits.indexOf(char);
+    
+    if (persianIndex !== -1) {
+      result += englishDigits[persianIndex];
+    } else if (arabicIndex !== -1) {
+      result += englishDigits[arabicIndex];
+    } else {
+      result += char;
+    }
+  }
+  
+  return result;
+};
+

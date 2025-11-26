@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toPersianDigits, toEnglishDigits } from '../utils/numberUtils';
 
 interface PasswordScreenProps {
   phoneNumber: string;
@@ -15,15 +16,24 @@ export const PasswordScreen: React.FC<PasswordScreenProps> = ({
   onBack, 
   onSwitchToOTP 
 }) => {
-  const [password, setPassword] = useState('');
+  // Store display value in Persian digits to prevent flicker (only when visible)
+  const [passwordDisplay, setPasswordDisplay] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const handlePasswordChange = (text: string) => {
+    // Convert to English for storage, but store Persian for display when visible
+    const englishPassword = toEnglishDigits(text);
+    setPasswordDisplay(showPassword ? toPersianDigits(englishPassword) : englishPassword);
+  };
+
   const handlePasswordLogin = () => {
-    if (password.length < 4) {
+    // Convert display value to English for authentication
+    const englishPassword = toEnglishDigits(passwordDisplay);
+    if (englishPassword.length < 4) {
       // Basic validation
       return;
     }
-    onPasswordLogin(password);
+    onPasswordLogin(englishPassword);
   };
 
   return (
@@ -62,8 +72,8 @@ export const PasswordScreen: React.FC<PasswordScreenProps> = ({
               <Text className="text-gray-600 text-base font-yekan text-center mb-2">
                 رمز عبور خود را وارد کنید
               </Text>
-              <Text className="text-honolulu-blue text-lg font-yekan-bold text-center">
-                {phoneNumber}
+              <Text className="text-honolulu-blue text-lg font-yekan-bold text-center" style={{ fontFamily: 'Vazirmatn-Bold' }}>
+                {toPersianDigits(phoneNumber)}
               </Text>
             </View>
 
@@ -75,16 +85,22 @@ export const PasswordScreen: React.FC<PasswordScreenProps> = ({
                 </Text>
                 <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-4 border border-gray-100">
                   <TextInput
-                    value={password}
-                    onChangeText={setPassword}
+                    value={passwordDisplay}
+                    onChangeText={handlePasswordChange}
                     placeholder="رمز عبور خود را وارد کنید"
                     placeholderTextColor="#9CA3AF"
                     secureTextEntry={!showPassword}
                     className="flex-1 text-gray-900 text-base font-yekan"
-                    style={{ textAlign: 'right' }}
+                    style={{ textAlign: 'right', fontFamily: 'Vazirmatn-Regular' }}
                   />
                   <TouchableOpacity 
-                    onPress={() => setShowPassword(!showPassword)}
+                    onPress={() => {
+                      const newShowPassword = !showPassword;
+                      setShowPassword(newShowPassword);
+                      // Update display value when toggling visibility
+                      const englishPassword = toEnglishDigits(passwordDisplay);
+                      setPasswordDisplay(newShowPassword ? toPersianDigits(englishPassword) : englishPassword);
+                    }}
                     className="ml-3"
                   >
                     <Text className="text-gray-500 text-lg">
@@ -96,23 +112,23 @@ export const PasswordScreen: React.FC<PasswordScreenProps> = ({
 
               <TouchableOpacity
                 onPress={handlePasswordLogin}
-                disabled={password.length < 4}
+                disabled={toEnglishDigits(passwordDisplay).length < 4}
                 activeOpacity={0.8}
                 style={{
-                  shadowColor: password.length >= 4 ? '#0077B6' : 'transparent',
+                  shadowColor: toEnglishDigits(passwordDisplay).length >= 4 ? '#0077B6' : 'transparent',
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
-                  elevation: password.length >= 4 ? 4 : 0
+                  elevation: toEnglishDigits(passwordDisplay).length >= 4 ? 4 : 0
                 }}
               >
                 <View className={`w-full rounded-2xl py-4 items-center ${
-                  password.length >= 4 
+                  toEnglishDigits(passwordDisplay).length >= 4 
                     ? 'bg-honolulu-blue' 
                     : 'bg-gray-200'
                 }`}>
                   <Text className={`text-base font-yekan-bold ${
-                    password.length >= 4 ? 'text-white' : 'text-gray-400'
+                    toEnglishDigits(passwordDisplay).length >= 4 ? 'text-white' : 'text-gray-400'
                   }`}>
                     ورود
                   </Text>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toPersianDigits, toEnglishDigits } from '../utils/numberUtils';
 
 interface VerificationScreenProps {
   phoneNumber: string;
@@ -15,7 +16,8 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
   onBack, 
   onResend 
 }) => {
-  const [code, setCode] = useState(['', '', '', '', '', '']);
+  // Store display values in Persian digits to prevent flicker
+  const [codeDisplay, setCodeDisplay] = useState(['', '', '', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const inputRefs = useRef<TextInput[]>([]);
 
@@ -42,23 +44,32 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
   const handleCodeChange = (value: string, index: number) => {
     if (value.length > 1) return; // Prevent multiple characters
     
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
+    // Clean input - accept both English and Persian digits
+    const cleaned = value.replace(/[^0-9۰-۹]/g, '');
+    if (cleaned.length > 1) return;
+    
+    // Convert to English for processing, but store Persian for display
+    const englishValue = toEnglishDigits(cleaned);
+    const persianValue = cleaned ? toPersianDigits(englishValue) : '';
+    
+    const newCodeDisplay = [...codeDisplay];
+    newCodeDisplay[index] = persianValue;
+    setCodeDisplay(newCodeDisplay);
 
     // Auto-focus next input
-    if (value && index < 5) {
+    if (englishValue && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Check if all digits are entered
-    if (newCode.every(digit => digit !== '') && newCode.join('').length === 6) {
-      handleVerify(newCode.join(''));
+    // Check if all digits are entered - convert to English for verification
+    const allDigits = newCodeDisplay.map(d => toEnglishDigits(d));
+    if (allDigits.every(digit => digit !== '') && allDigits.join('').length === 6) {
+      handleVerify(allDigits.join(''));
     }
   };
 
   const handleKeyPress = (key: string, index: number) => {
-    if (key === 'Backspace' && !code[index] && index > 0) {
+    if (key === 'Backspace' && !codeDisplay[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
@@ -81,7 +92,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
     }
     
     setTimeLeft(120);
-    setCode(['', '', '', '', '', '']);
+    setCodeDisplay(['', '', '', '', '', '']);
     onResend();
   };
 
@@ -121,8 +132,8 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
               <Text className="text-gray-600 text-base font-yekan text-center mb-2">
                 کد تأیید به شماره زیر ارسال شد:
               </Text>
-              <Text className="text-honolulu-blue text-lg font-yekan-bold text-center">
-                {phoneNumber}
+              <Text className="text-honolulu-blue text-lg font-yekan-bold text-center" style={{ fontFamily: 'Vazirmatn-Bold' }}>
+                {toPersianDigits(phoneNumber)}
               </Text>
             </View>
 
@@ -133,7 +144,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
               </Text>
               
               <View className="flex-row justify-center mb-6 flex-wrap">
-                {code.map((digit, index) => (
+                {codeDisplay.map((digit, index) => (
                   <TextInput
                     key={index}
                     ref={(ref) => {
@@ -141,8 +152,7 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
                     }}
                     value={digit}
                     onChangeText={(value) => {
-                      const cleanedValue = value.replace(/[^0-9]/g, '');
-                      handleCodeChange(cleanedValue, index);
+                      handleCodeChange(value, index);
                     }}
                     onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
                     keyboardType="number-pad"
@@ -150,7 +160,8 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
                     className="w-12 h-14 mx-1 text-center text-xl font-yekan-bold rounded-2xl bg-gray-50 text-gray-900"
                     style={{ 
                       borderWidth: 2,
-                      borderColor: digit ? '#0077B6' : '#F3F4F6'
+                      borderColor: digit ? '#0077B6' : '#F3F4F6',
+                      fontFamily: 'Vazirmatn-Bold'
                     }}
                   />
                 ))}
@@ -175,24 +186,27 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({
               </View>
 
               <TouchableOpacity
-                onPress={() => handleVerify(code.join(''))}
-                disabled={!code.every(digit => digit !== '')}
+                onPress={() => {
+                  const englishCode = codeDisplay.map(d => toEnglishDigits(d)).join('');
+                  handleVerify(englishCode);
+                }}
+                disabled={!codeDisplay.every(digit => digit !== '')}
                 activeOpacity={0.8}
                 style={{
-                  shadowColor: code.every(digit => digit !== '') ? '#0077B6' : 'transparent',
+                  shadowColor: codeDisplay.every(digit => digit !== '') ? '#0077B6' : 'transparent',
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
-                  elevation: code.every(digit => digit !== '') ? 4 : 0
+                  elevation: codeDisplay.every(digit => digit !== '') ? 4 : 0
                 }}
               >
                 <View className={`w-full rounded-2xl py-4 items-center ${
-                  code.every(digit => digit !== '') 
+                  codeDisplay.every(digit => digit !== '') 
                     ? 'bg-honolulu-blue' 
                     : 'bg-gray-200'
                 }`}>
                   <Text className={`text-base font-yekan-bold ${
-                    code.every(digit => digit !== '') ? 'text-white' : 'text-gray-400'
+                    codeDisplay.every(digit => digit !== '') ? 'text-white' : 'text-gray-400'
                   }`}>
                     تأیید و ورود
                   </Text>

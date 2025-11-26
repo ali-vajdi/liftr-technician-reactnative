@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toPersianDigits, toEnglishDigits } from '../utils/numberUtils';
 
 interface LoginScreenProps {
   onLogin: (phoneNumber: string) => void;
@@ -8,28 +9,35 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  // Store display value in Persian digits to prevent flicker
+  const [phoneNumberDisplay, setPhoneNumberDisplay] = useState('');
 
   const formatPhoneNumber = (text: string) => {
-    // Remove all non-numeric characters
-    const cleaned = text.replace(/\D/g, '');
+    // Remove all non-numeric characters (works with both English and Persian)
+    const cleaned = text.replace(/[^0-9۰-۹]/g, '');
+    
+    // Convert to English for processing
+    const englishText = toEnglishDigits(cleaned);
     
     // Format as Iranian phone number (09xxxxxxxxx)
-    if (cleaned.length <= 11) {
-      if (cleaned.startsWith('09')) {
-        return cleaned;
-      } else if (cleaned.startsWith('9')) {
-        return '0' + cleaned;
-      } else if (cleaned.length > 0) {
-        return '09' + cleaned;
+    if (englishText.length <= 11) {
+      if (englishText.startsWith('09')) {
+        return englishText;
+      } else if (englishText.startsWith('9')) {
+        return '0' + englishText;
+      } else if (englishText.length > 0) {
+        return '09' + englishText;
       }
     }
-    return cleaned.slice(0, 11);
+    return englishText.slice(0, 11);
   };
 
   const handlePhoneChange = (text: string) => {
-    const formatted = formatPhoneNumber(text);
-    setPhoneNumber(formatted);
+    // Immediately convert any input (English or Persian) to Persian for display
+    const englishText = toEnglishDigits(text);
+    const formatted = formatPhoneNumber(englishText);
+    // Store Persian version for display to prevent flicker
+    setPhoneNumberDisplay(toPersianDigits(formatted));
   };
 
   const validatePhoneNumber = (phone: string) => {
@@ -38,17 +46,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => 
   };
 
   const handleLogin = () => {
-    if (!phoneNumber) {
+    // Convert display value to English for validation and API call
+    const englishPhone = toEnglishDigits(phoneNumberDisplay);
+    
+    if (!englishPhone) {
       Alert.alert('خطا', 'لطفاً شماره تلفن خود را وارد کنید');
       return;
     }
 
-    if (!validatePhoneNumber(phoneNumber)) {
+    if (!validatePhoneNumber(englishPhone)) {
       Alert.alert('خطا', 'لطفاً شماره تلفن معتبر وارد کنید');
       return;
     }
 
-    onLogin(phoneNumber);
+    onLogin(englishPhone);
   };
 
   return (
@@ -96,14 +107,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => 
                 <View className="flex-row items-center bg-gray-50 rounded-2xl px-4 py-4 border border-gray-100">
                   <Text className="text-gray-500 text-base font-yekan ml-3">+98</Text>
                   <TextInput
-                    value={phoneNumber}
+                    value={phoneNumberDisplay}
                     onChangeText={handlePhoneChange}
                     placeholder="۹۱۲ ۳۴۵ ۶۷۸۹"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="phone-pad"
                     maxLength={11}
                     className="flex-1 text-gray-900 text-base font-yekan"
-                    style={{ textAlign: 'right' }}
+                    style={{ textAlign: 'right', fontFamily: 'Vazirmatn-Regular' }}
                   />
                 </View>
               </View>
@@ -114,23 +125,23 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onBack }) => 
 
               <TouchableOpacity
                 onPress={handleLogin}
-                disabled={phoneNumber.length !== 11}
+                disabled={phoneNumberDisplay.length !== 11}
                 activeOpacity={0.8}
                 style={{
-                  shadowColor: phoneNumber.length === 11 ? '#0077B6' : 'transparent',
+                  shadowColor: phoneNumberDisplay.length === 11 ? '#0077B6' : 'transparent',
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
-                  elevation: phoneNumber.length === 11 ? 4 : 0
+                  elevation: phoneNumberDisplay.length === 11 ? 4 : 0
                 }}
               >
                 <View className={`w-full rounded-2xl py-4 items-center ${
-                  phoneNumber.length === 11 
+                  phoneNumberDisplay.length === 11 
                     ? 'bg-honolulu-blue' 
                     : 'bg-gray-200'
                 }`}>
                   <Text className={`text-base font-yekan-bold ${
-                    phoneNumber.length === 11 ? 'text-white' : 'text-gray-400'
+                    phoneNumberDisplay.length === 11 ? 'text-white' : 'text-gray-400'
                   }`}>
                     ادامه
                   </Text>
