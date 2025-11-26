@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { toPersianDigits } from '../../utils/numberUtils';
 
 interface StatCardProps {
   title: string;
@@ -32,11 +31,11 @@ export const StatCard: React.FC<StatCardProps> = ({
         >
           <Text className="text-3xl">{icon}</Text>
         </View>
-        <Text className="text-4xl font-yekan-bold text-gray-900" style={{ fontFamily: 'YekanBakhFaNum-Bold' }}>
-          {toPersianDigits(value)}
+        <Text className="text-4xl font-yekan-bold text-gray-900" style={{ fontFamily: 'Vazirmatn-Bold' }}>
+          {value}
         </Text>
       </View>
-      <Text className="text-base font-yekan text-gray-600" style={{ textAlign: 'right', fontFamily: 'YekanBakhFaNum-Regular' }}>
+      <Text className="text-base font-yekan text-gray-600" style={{ textAlign: 'right', fontFamily: 'Vazirmatn-Regular' }}>
         {title}
       </Text>
     </View>

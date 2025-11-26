@@ -105,7 +105,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
       }}>
           <Text style={{
             fontSize: 22,
-            fontFamily: 'YekanBakhFaNum-Bold',
+            fontFamily: 'Vazirmatn-Bold',
             color: '#1F2937',
             textAlign: 'right',
           }}>
@@ -133,7 +133,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
               )}
               <Text style={{
                 fontSize: 13,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 color: 'white',
               }}>
                 خواندن همه
@@ -187,7 +187,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
               <Text style={{
                 color: 'white',
                 fontSize: 16,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
               }}>
                 تلاش مجدد
               </Text>
@@ -278,7 +278,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                 <View style={{ flex: 1, marginLeft: 12 }}>
                   <Text style={{
                     fontSize: 17,
-                    fontFamily: 'YekanBakhFaNum-Bold',
+                    fontFamily: 'Vazirmatn-Bold',
                     color: '#1F2937',
                     textAlign: 'right',
                     marginBottom: 4,
@@ -287,7 +287,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                   </Text>
                   <Text style={{
                     fontSize: 12,
-                    fontFamily: 'YekanBakhFaNum-Regular',
+                    fontFamily: 'Vazirmatn-Regular',
                     color: '#9CA3AF',
                     textAlign: 'right',
                   }}>
@@ -313,7 +313,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                 <Ionicons name="person-outline" size={16} color="#9CA3AF" style={{ marginLeft: 6 }} />
                 <Text style={{
                   fontSize: 14,
-                  fontFamily: 'YekanBakhFaNum-Regular',
+                  fontFamily: 'Vazirmatn-Regular',
                   color: '#6B7280',
                   textAlign: 'right',
                 }}>
@@ -324,7 +324,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
               {/* Message Content */}
               <Text style={{
                 fontSize: 14,
-                fontFamily: 'YekanBakhFaNum-Regular',
+                fontFamily: 'Vazirmatn-Regular',
                 color: '#4B5563',
                 textAlign: 'right',
                 lineHeight: 24,
@@ -355,7 +355,7 @@ export const MessagesPage: React.FC<MessagesPageProps> = ({ onBack, onMessagesRe
                   <Ionicons name="checkmark-circle-outline" size={14} color="#10B981" style={{ marginLeft: 4 }} />
                   <Text style={{
                     fontSize: 11,
-                    fontFamily: 'YekanBakhFaNum-Regular',
+                    fontFamily: 'Vazirmatn-Regular',
                     color: '#10B981',
                     textAlign: 'right',
                   }}>

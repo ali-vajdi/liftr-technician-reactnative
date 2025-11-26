@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { toPersianDigits } from '../../utils/numberUtils';
 
 interface HeaderProps {
   organizationName?: string;
@@ -55,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
           style={{ 
             textAlign: 'right',
             fontSize: 18,
-            fontFamily: 'YekanBakhFaNum-Regular',
+            fontFamily: 'Vazirmatn-Regular',
           }}
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -105,9 +104,9 @@ export const Header: React.FC<HeaderProps> = ({
                 <Text style={{
                   color: 'white',
                   fontSize: 11,
-                  fontFamily: 'YekanBakhFaNum-Bold',
+                  fontFamily: 'Vazirmatn-Bold',
                 }}>
-                  {unreadCount > 99 ? '۹۹+' : toPersianDigits(unreadCount)}
+                  {unreadCount > 99 ? '۹۹+' : unreadCount}
                 </Text>
               </View>
             )}

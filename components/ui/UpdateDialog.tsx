@@ -78,7 +78,7 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
             
             <Text style={{ 
               fontSize: 22, 
-              fontFamily: 'YekanBakhFaNum-Bold', 
+              fontFamily: 'Vazirmatn-Bold', 
               color: 'white',
               textAlign: 'center',
               marginBottom: 8
@@ -88,7 +88,7 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
 
             <Text style={{ 
               fontSize: 14, 
-              fontFamily: 'YekanBakhFaNum-Regular', 
+              fontFamily: 'Vazirmatn-Regular', 
               color: 'rgba(255,255,255,0.9)',
               textAlign: 'center'
             }}>
@@ -100,7 +100,7 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
           <View style={{ padding: 24 }}>
             <Text style={{ 
               fontSize: 16, 
-              fontFamily: 'YekanBakhFaNum-Regular', 
+              fontFamily: 'Vazirmatn-Regular', 
               color: '#4B5563', 
               textAlign: 'center',
               lineHeight: 26,
@@ -129,7 +129,7 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
               <Text style={{ 
                 color: 'white', 
                 fontSize: 17, 
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 letterSpacing: 0.5
               }}>
                 به‌روزرسانی
@@ -152,7 +152,7 @@ export const UpdateDialog: React.FC<UpdateDialogProps> = ({
                 <Text style={{ 
                   color: '#6B7280', 
                   fontSize: 17, 
-                  fontFamily: 'YekanBakhFaNum-Bold',
+                  fontFamily: 'Vazirmatn-Bold',
                   letterSpacing: 0.5
                 }}>
                   بعداً

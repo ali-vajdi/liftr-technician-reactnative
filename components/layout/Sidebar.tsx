@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Text style={{ 
                   color: 'white', 
                   fontSize: 20, 
-                  fontFamily: 'YekanBakhFaNum-Bold', 
+                  fontFamily: 'Vazirmatn-Bold', 
                   marginBottom: 4, 
                   textAlign: 'right' 
                 }}>
@@ -148,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Text style={{ 
                   color: 'rgba(255,255,255,0.9)', 
                   fontSize: 14, 
-                  fontFamily: 'YekanBakhFaNum-Regular', 
+                  fontFamily: 'Vazirmatn-Regular', 
                   textAlign: 'right'
                 }}>
                   {phoneNumber}
@@ -170,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <Text style={{ 
                     color: technician?.has_credentials ? '#065F46' : '#4B5563',
                     fontSize: 12,
-                    fontFamily: 'YekanBakhFaNum-Bold',
+                    fontFamily: 'Vazirmatn-Bold',
                     textAlign: 'right'
                   }}>
                     {technician?.has_credentials ? '✓ تایید شده' : 'در انتظار تایید'}
@@ -184,7 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#1F2937',
                         fontSize: 15,
-                        fontFamily: 'YekanBakhFaNum-Bold',
+                        fontFamily: 'Vazirmatn-Bold',
                         textAlign: 'right'
                       }}>
                         {technician.first_name} {technician.last_name}
@@ -192,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#9CA3AF',
                         fontSize: 12,
-                        fontFamily: 'YekanBakhFaNum-Regular',
+                        fontFamily: 'Vazirmatn-Regular',
                         textAlign: 'left'
                       }}>
                         نام
@@ -205,7 +205,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#1F2937',
                         fontSize: 15,
-                        fontFamily: 'YekanBakhFaNum-Bold',
+                        fontFamily: 'Vazirmatn-Bold',
                         textAlign: 'right'
                       }}>
                         {technician.national_id}
@@ -213,7 +213,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#9CA3AF',
                         fontSize: 12,
-                        fontFamily: 'YekanBakhFaNum-Regular',
+                        fontFamily: 'Vazirmatn-Regular',
                         textAlign: 'left'
                       }}>
                         کد ملی
@@ -226,7 +226,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#1F2937',
                         fontSize: 15,
-                        fontFamily: 'YekanBakhFaNum-Bold',
+                        fontFamily: 'Vazirmatn-Bold',
                         textAlign: 'right',
                         flex: 1
                       }}>
@@ -235,7 +235,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <Text style={{ 
                         color: '#9CA3AF',
                         fontSize: 12,
-                        fontFamily: 'YekanBakhFaNum-Regular',
+                        fontFamily: 'Vazirmatn-Regular',
                         textAlign: 'left',
                         marginLeft: 8
                       }}>
@@ -248,7 +248,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <Text style={{ 
                       color: '#1F2937',
                       fontSize: 15,
-                      fontFamily: 'YekanBakhFaNum-Bold',
+                      fontFamily: 'Vazirmatn-Bold',
                       textAlign: 'right'
                     }}>
                       #{technician?.id ? technician.id : '---'}
@@ -256,7 +256,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <Text style={{ 
                       color: '#9CA3AF',
                       fontSize: 12,
-                      fontFamily: 'YekanBakhFaNum-Regular',
+                      fontFamily: 'Vazirmatn-Regular',
                       textAlign: 'left'
                     }}>
                       شناسه
@@ -287,7 +287,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     color="#DC2626" 
                     style={{ marginLeft: 8 }} 
                   />
-                  <Text style={{ color: '#DC2626', fontSize: 15, fontFamily: 'YekanBakhFaNum-Bold' }}>
+                  <Text style={{ color: '#DC2626', fontSize: 15, fontFamily: 'Vazirmatn-Bold' }}>
                     خروج
                   </Text>
                 </TouchableOpacity>

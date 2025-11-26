@@ -43,7 +43,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           >
             <Ionicons name={icon} size={16} color="#6B7280" />
           </View>
-          <Text style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', textAlign: 'right' }}>
+          <Text style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'Vazirmatn-Regular', textAlign: 'right' }}>
             {label}
           </Text>
         </View>
@@ -52,7 +52,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           style={{
             color: '#1F2937',
             fontSize: 15,
-            fontFamily: 'YekanBakhFaNum-Bold',
+            fontFamily: 'Vazirmatn-Bold',
             textAlign: 'left',
             flex: 1,
           }}
@@ -76,7 +76,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       }}>
         <Text style={{
           fontSize: 22,
-          fontFamily: 'YekanBakhFaNum-Bold',
+          fontFamily: 'Vazirmatn-Bold',
           color: '#1F2937',
           textAlign: 'right',
         }}>
@@ -125,7 +125,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               style={{
                 color: '#1F2937',
                 fontSize: 18,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 textAlign: 'right',
                 marginBottom: 4,
               }}
@@ -135,7 +135,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 ? `${technician?.first_name || ''} ${technician?.last_name || ''}`.trim()
                 : 'کاربر لیفتر'}
             </Text>
-            <Text style={{ color: '#6B7280', fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', textAlign: 'right' }}>
+            <Text style={{ color: '#6B7280', fontSize: 13, fontFamily: 'Vazirmatn-Regular', textAlign: 'right' }}>
               {phoneNumber}
             </Text>
           </View>
@@ -154,7 +154,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           <Text style={{ 
             color: technician?.has_credentials ? '#065F46' : '#4B5563',
             fontSize: 12,
-            fontFamily: 'YekanBakhFaNum-Bold',
+            fontFamily: 'Vazirmatn-Bold',
             textAlign: 'right'
           }}>
             {technician?.has_credentials ? '✓ تایید شده' : 'در انتظار تایید'}
@@ -219,7 +219,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             color="#DC2626" 
             style={{ marginLeft: 8 }} 
           />
-          <Text style={{ color: '#DC2626', fontSize: 15, fontFamily: 'YekanBakhFaNum-Bold' }}>
+          <Text style={{ color: '#DC2626', fontSize: 15, fontFamily: 'Vazirmatn-Bold' }}>
             خروج از سیستم
           </Text>
         </TouchableOpacity>

@@ -67,7 +67,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
             
             <Text style={{ 
               fontSize: 22, 
-              fontFamily: 'YekanBakhFaNum-Bold', 
+              fontFamily: 'Vazirmatn-Bold', 
               color: 'white',
               textAlign: 'center',
               marginBottom: 8
@@ -80,7 +80,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
           <View style={{ padding: 24 }}>
             <Text style={{ 
               fontSize: 16, 
-              fontFamily: 'YekanBakhFaNum-Regular', 
+              fontFamily: 'Vazirmatn-Regular', 
               color: '#4B5563', 
               textAlign: 'center',
               lineHeight: 26,
@@ -102,7 +102,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
                   justifyContent: 'center'
                 }}
               >
-                <Text style={{ color: 'white', fontSize: 17, fontFamily: 'YekanBakhFaNum-Bold' }}>
+                <Text style={{ color: 'white', fontSize: 17, fontFamily: 'Vazirmatn-Bold' }}>
                   خروج
                 </Text>
               </TouchableOpacity>
@@ -119,7 +119,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
                   justifyContent: 'center'
                 }}
               >
-                <Text style={{ color: '#4B5563', fontSize: 17, fontFamily: 'YekanBakhFaNum-Bold' }}>
+                <Text style={{ color: '#4B5563', fontSize: 17, fontFamily: 'Vazirmatn-Bold' }}>
                   انصراف
                 </Text>
               </TouchableOpacity>

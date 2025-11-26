@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getReports } from '../services/buildingService';
 import type { ReportsResponse, ReportStats, LastService } from '../types';
-import { toPersianDigits, formatPersianNumber } from '../utils/numberUtils';
 
 export const ReportsPage: React.FC = () => {
   const [reports, setReports] = useState<ReportsResponse | null>(null);
@@ -71,7 +70,7 @@ export const ReportsPage: React.FC = () => {
           <Text
             style={{
               fontSize: 16,
-              fontFamily: 'YekanBakhFaNum-Bold',
+              fontFamily: 'Vazirmatn-Bold',
               color: '#1F2937',
               textAlign: 'right',
               flex: 1,
@@ -95,11 +94,11 @@ export const ReportsPage: React.FC = () => {
               }}
             >
               <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', textAlign: 'right' }}>
                   نرخ تکمیل
                 </Text>
-                <Text style={{ fontSize: 18, fontFamily: 'YekanBakhFaNum-Bold', color: '#0077B6', textAlign: 'left' }}>
-                  {toPersianDigits(stats.completion_rate.toFixed(1))}%
+                <Text style={{ fontSize: 18, fontFamily: 'Vazirmatn-Bold', color: '#0077B6', textAlign: 'left' }}>
+                  {stats.completion_rate.toFixed(1)}%
                 </Text>
               </View>
             </View>
@@ -115,18 +114,18 @@ export const ReportsPage: React.FC = () => {
           /* Simple View - Only Total and Completed */
           <View style={{ flexDirection: 'row-reverse', gap: 12 }}>
             <View style={{ flex: 1, backgroundColor: '#F9FAFB', borderRadius: 12, padding: 16, alignItems: 'center' }}>
-              <Text style={{ fontSize: 24, fontFamily: 'YekanBakhFaNum-Bold', color: '#1F2937', marginBottom: 6 }}>
-                {toPersianDigits(stats.total)}
+              <Text style={{ fontSize: 24, fontFamily: 'Vazirmatn-Bold', color: '#1F2937', marginBottom: 6 }}>
+                {stats.total}
               </Text>
-              <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
+              <Text style={{ fontSize: 13, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', textAlign: 'center' }}>
                 کل
               </Text>
             </View>
             <View style={{ flex: 1, backgroundColor: '#ECFDF5', borderRadius: 12, padding: 16, alignItems: 'center' }}>
-              <Text style={{ fontSize: 24, fontFamily: 'YekanBakhFaNum-Bold', color: '#10B981', marginBottom: 6 }}>
-                {toPersianDigits(stats.completed)}
+              <Text style={{ fontSize: 24, fontFamily: 'Vazirmatn-Bold', color: '#10B981', marginBottom: 6 }}>
+                {stats.completed}
               </Text>
-              <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
+              <Text style={{ fontSize: 13, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', textAlign: 'center' }}>
                 تکمیل شده
               </Text>
             </View>
@@ -148,10 +147,10 @@ export const ReportsPage: React.FC = () => {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 20, fontFamily: 'YekanBakhFaNum-Bold', color, marginBottom: 4 }}>
-          {toPersianDigits(value)}
+        <Text style={{ fontSize: 20, fontFamily: 'Vazirmatn-Bold', color, marginBottom: 4 }}>
+          {value}
         </Text>
-        <Text style={{ fontSize: 11, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'center' }}>
+        <Text style={{ fontSize: 11, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', textAlign: 'center' }}>
           {label}
         </Text>
       </View>
@@ -226,7 +225,7 @@ export const ReportsPage: React.FC = () => {
             <Text
               style={{
                 fontSize: 16,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 color: '#1F2937',
                 textAlign: 'right',
                 marginBottom: 4,
@@ -237,7 +236,7 @@ export const ReportsPage: React.FC = () => {
             <Text
               style={{
                 fontSize: 13,
-                fontFamily: 'YekanBakhFaNum-Regular',
+                fontFamily: 'Vazirmatn-Regular',
                 color: '#6B7280',
                 textAlign: 'right',
               }}
@@ -256,7 +255,7 @@ export const ReportsPage: React.FC = () => {
             <Text
               style={{
                 fontSize: 11,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 color: getStatusColor(service.status),
               }}
             >
@@ -268,16 +267,16 @@ export const ReportsPage: React.FC = () => {
         {/* Service Date */}
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 8 }}>
           <Ionicons name="calendar-outline" size={16} color="#6B7280" style={{ marginLeft: 6 }} />
-          <Text style={{ fontSize: 13, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', textAlign: 'right' }}>
-            {monthNames[service.service_month - 1]} {toPersianDigits(service.service_year)}
+          <Text style={{ fontSize: 13, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', textAlign: 'right' }}>
+            {monthNames[service.service_month - 1]} {service.service_year}
           </Text>
         </View>
 
         {/* Assigned At */}
         <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: service.completed_at ? 8 : 0 }}>
           <Ionicons name="time-outline" size={16} color="#6B7280" style={{ marginLeft: 6 }} />
-          <Text style={{ fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', color: '#9CA3AF', textAlign: 'right' }}>
-            اختصاص داده شده: {toPersianDigits(service.assigned_at)}
+          <Text style={{ fontSize: 12, fontFamily: 'Vazirmatn-Regular', color: '#9CA3AF', textAlign: 'right' }}>
+            اختصاص داده شده: {service.assigned_at}
           </Text>
         </View>
 
@@ -285,8 +284,8 @@ export const ReportsPage: React.FC = () => {
         {service.completed_at && (
           <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
             <Ionicons name="checkmark-circle-outline" size={16} color="#10B981" style={{ marginLeft: 6 }} />
-            <Text style={{ fontSize: 12, fontFamily: 'YekanBakhFaNum-Regular', color: '#10B981', textAlign: 'right' }}>
-              تکمیل شده: {toPersianDigits(service.completed_at)}
+            <Text style={{ fontSize: 12, fontFamily: 'Vazirmatn-Regular', color: '#10B981', textAlign: 'right' }}>
+              تکمیل شده: {service.completed_at}
             </Text>
           </View>
         )}
@@ -304,7 +303,7 @@ export const ReportsPage: React.FC = () => {
     }}>
       <Text style={{
         fontSize: 22,
-        fontFamily: 'YekanBakhFaNum-Bold',
+        fontFamily: 'Vazirmatn-Bold',
         color: '#1F2937',
         textAlign: 'right',
       }}>
@@ -319,7 +318,7 @@ export const ReportsPage: React.FC = () => {
         {renderHeader()}
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color="#0077B6" />
-          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginTop: 12 }}>
+          <Text style={{ fontSize: 14, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', marginTop: 12 }}>
             در حال بارگذاری گزارش‌ها...
           </Text>
         </View>
@@ -333,10 +332,10 @@ export const ReportsPage: React.FC = () => {
         {renderHeader()}
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
-          <Text style={{ fontSize: 16, fontFamily: 'YekanBakhFaNum-Bold', color: '#1F2937', marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 16, fontFamily: 'Vazirmatn-Bold', color: '#1F2937', marginTop: 16, marginBottom: 8, textAlign: 'center' }}>
             خطا در بارگذاری گزارش‌ها
           </Text>
-          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#6B7280', marginBottom: 20, textAlign: 'center' }}>
+          <Text style={{ fontSize: 14, fontFamily: 'Vazirmatn-Regular', color: '#6B7280', marginBottom: 20, textAlign: 'center' }}>
             {error}
           </Text>
           <TouchableOpacity
@@ -348,7 +347,7 @@ export const ReportsPage: React.FC = () => {
               paddingHorizontal: 24,
             }}
           >
-            <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Bold', color: 'white' }}>
+            <Text style={{ fontSize: 14, fontFamily: 'Vazirmatn-Bold', color: 'white' }}>
               تلاش مجدد
             </Text>
           </TouchableOpacity>
@@ -442,7 +441,7 @@ export const ReportsPage: React.FC = () => {
             <Text
               style={{
                 fontSize: 16,
-                fontFamily: 'YekanBakhFaNum-Bold',
+                fontFamily: 'Vazirmatn-Bold',
                 color: '#1F2937',
                 textAlign: 'right',
                 flex: 1,
@@ -471,7 +470,7 @@ export const ReportsPage: React.FC = () => {
           }}
         >
           <Ionicons name="document-text-outline" size={48} color="#D1D5DB" />
-          <Text style={{ fontSize: 14, fontFamily: 'YekanBakhFaNum-Regular', color: '#9CA3AF', marginTop: 12, textAlign: 'center' }}>
+          <Text style={{ fontSize: 14, fontFamily: 'Vazirmatn-Regular', color: '#9CA3AF', marginTop: 12, textAlign: 'center' }}>
             هیچ سرویسی یافت نشد
           </Text>
         </View>

@@ -241,7 +241,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           />
           <Text style={{ 
             fontSize: 12, 
-            fontFamily: 'YekanBakhFaNum-Regular', 
+            fontFamily: 'Vazirmatn-Regular', 
             color: activePage === 'reports' ? '#0077B6' : '#6B7280',
             marginTop: 4
           }}>
@@ -273,7 +273,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           />
           <Text style={{ 
             fontSize: 12, 
-            fontFamily: 'YekanBakhFaNum-Regular', 
+            fontFamily: 'Vazirmatn-Regular', 
             color: activePage === 'home' ? '#0077B6' : '#6B7280',
             marginTop: 4
           }}>
@@ -305,7 +305,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           />
           <Text style={{ 
             fontSize: 12, 
-            fontFamily: 'YekanBakhFaNum-Regular', 
+            fontFamily: 'Vazirmatn-Regular', 
             color: activePage === 'settings' ? '#0077B6' : '#6B7280',
             marginTop: 4
           }}>

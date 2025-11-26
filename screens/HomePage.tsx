@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { getAssignedBuildings } from '../services/buildingService';
 import type { AssignedBuilding, DateGroup } from '../types';
-import { toPersianDigits } from '../utils/numberUtils';
 
 interface HomePageProps {
   onBuildingPress?: (serviceId: number) => void;
@@ -58,7 +57,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
     }}>
       <Text style={{
         fontSize: 22,
-        fontFamily: 'YekanBakhFaNum-Bold',
+        fontFamily: 'Vazirmatn-Bold',
         color: '#1F2937',
         textAlign: 'right',
         flex: 1,
@@ -235,7 +234,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                   <View style={{ flex: 1 }}>
                     <Text style={{
                       fontSize: 22,
-                      fontFamily: 'YekanBakhFaNum-Bold',
+                      fontFamily: 'Vazirmatn-Bold',
                       color: '#1F2937',
                       textAlign: 'right',
                       marginBottom: 4,
@@ -252,7 +251,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                         <Ionicons name="alert-circle" size={14} color="#DC2626" />
                         <Text style={{
                           fontSize: 12,
-                          fontFamily: 'YekanBakhFaNum-Bold',
+                          fontFamily: 'Vazirmatn-Bold',
                           color: '#DC2626',
                         }}>
                           تاریخ مجاز مراجعه به اتمام رسیده است
@@ -289,10 +288,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                             />
                             <Text style={{
                               fontSize: 18,
-                              fontFamily: 'YekanBakhFaNum-Bold',
+                              fontFamily: 'Vazirmatn-Bold',
                               color: '#1F2937',
                             }}>
-                              {toPersianDigits(timeRange)}
+                              {timeRange}
                             </Text>
                           </View>
                           <View style={{
@@ -302,10 +301,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                           }} />
                           <Text style={{
                             fontSize: 12,
-                            fontFamily: 'YekanBakhFaNum-Regular',
+                            fontFamily: 'Vazirmatn-Regular',
                             color: '#6B7280',
                           }}>
-                            {toPersianDigits(buildings.length)} ساختمان
+                            {buildings.length} ساختمان
                           </Text>
                         </View>
 
@@ -339,7 +338,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                 <View style={{ flex: 1, marginLeft: 12 }}>
                                   <Text style={{
                                     fontSize: 18,
-                                    fontFamily: 'YekanBakhFaNum-Bold',
+                                    fontFamily: 'Vazirmatn-Bold',
                                     color: '#1F2937',
                                     textAlign: 'right',
                                     marginBottom: 6,
@@ -355,7 +354,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                     <Text style={{
                                       flex: 1,
                                       fontSize: 13,
-                                      fontFamily: 'YekanBakhFaNum-Regular',
+                                      fontFamily: 'Vazirmatn-Regular',
                                       color: '#6B7280',
                                       textAlign: 'right',
                                     }}>
@@ -397,10 +396,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                   <Ionicons name="calendar-outline" size={14} color="#9CA3AF" />
                                   <Text style={{
                                     fontSize: 11,
-                                    fontFamily: 'YekanBakhFaNum-Regular',
+                                    fontFamily: 'Vazirmatn-Regular',
                                     color: '#9CA3AF',
                                   }}>
-                                    {toPersianDigits(building.assigned_at_jalali)}
+                                    {building.assigned_at_jalali}
                                   </Text>
                                 </View>
                                 <View style={{
@@ -414,10 +413,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                                 }}>
                                   <Text style={{
                                     fontSize: 12,
-                                    fontFamily: 'YekanBakhFaNum-Bold',
+                                    fontFamily: 'Vazirmatn-Bold',
                                     color: '#0077B6',
                                   }}>
-                                    تعداد آسانسور: {toPersianDigits(building.elevators_count)}
+                                    تعداد آسانسور: {building.elevators_count}
                                   </Text>
                                 </View>
                               </View>
