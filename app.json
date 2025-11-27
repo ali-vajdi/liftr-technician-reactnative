@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "لیفتر تکنیسین",
+    "slug": "liftir-technician-app",
+    "version": "1.0.3",
+    "web": {
+      "name": "لیفتر تکنیسین",
+      "shortName": "لیفتر",
+      "favicon": "./assets/liftr-icon.jpg",
+      "icon": "./assets/liftr-icon.jpg"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#359cd7",
+          "image": "./assets/icon-splash.jpg",
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/liftr-icon.jpg",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icon-splash.jpg",
+      "resizeMode": "contain",
+      "backgroundColor": "#359cd7"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/liftr-icon.jpg",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.liftrir.technicianapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "94ed698c-cab3-4616-b684-9b26da1845b5"
+      }
+    },
+    "owner": "nimarastgou"
+  }
+}
