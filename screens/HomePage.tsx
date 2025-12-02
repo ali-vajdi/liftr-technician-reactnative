@@ -267,6 +267,22 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                     const buildings = dateGroup[timeRange] as AssignedBuilding[];
                     if (!Array.isArray(buildings) || buildings.length === 0) return null;
 
+                    // Reverse the time range text
+                    const reverseTimeRange = (range: string): string => {
+                      // Try splitting by common delimiters
+                      const delimiters = [' تا ', ' - ', '-', ' تا'];
+                      for (const delimiter of delimiters) {
+                        if (range.includes(delimiter)) {
+                          const parts = range.split(delimiter).map(p => p.trim());
+                          return parts.reverse().join(delimiter.trim());
+                        }
+                      }
+                      // If no delimiter found, reverse the entire string
+                      return range.split('').reverse().join('');
+                    };
+
+                    const reversedTimeRange = reverseTimeRange(timeRange);
+
                     return (
                       <View key={timeRange} style={{ gap: 12 }}>
                         {/* Time Range Badge */}
@@ -291,7 +307,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onBuildingPress }) => {
                               fontFamily: 'Vazirmatn-Bold',
                               color: '#1F2937',
                             }}>
-                              {timeRange}
+                              {reversedTimeRange}
                             </Text>
                           </View>
                           <View style={{
