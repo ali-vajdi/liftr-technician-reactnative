@@ -2,7 +2,7 @@
   "expo": {
     "name": "لیفتر تکنیسین",
     "slug": "liftir-technician-app",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "web": {
       "name": "لیفتر تکنیسین",
       "shortName": "لیفتر",
@@ -25,11 +25,6 @@
     "orientation": "portrait",
     "icon": "./assets/liftr-icon.jpg",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/icon-splash.jpg",
-      "resizeMode": "contain",
-      "backgroundColor": "#359cd7"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
