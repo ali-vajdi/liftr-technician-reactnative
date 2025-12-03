@@ -625,15 +625,12 @@ export default function App() {
       const MIN_SPLASH_DURATION = 2000; // Minimum 2 seconds
       
       try {
-        // Small delay to ensure React Native is fully initialized
-        // This allows our custom splash screen to render first
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Wait a bit more for custom splash to fully render
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Small delay to ensure custom splash screen component is mounted and rendered
+        // This prevents blank screen flash when hiding native splash
+        await new Promise(resolve => setTimeout(resolve, 50));
         
         // Hide the default native splash screen on Android/iOS
-        // This reveals our custom splash screen component underneath
+        // This ensures only our custom splash screen with progress bar is visible
         if (Platform.OS !== 'web') {
           try {
             await SplashScreen.hideAsync();
